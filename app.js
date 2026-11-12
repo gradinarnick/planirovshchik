@@ -185,7 +185,8 @@ function md(src){const lines=String(src||'').split('\n');let h='',list=null;cons
 const plain=s=>String(s||'').replace(/[#>*`\[\]_-]+/g,' ').replace(/\(https?:[^)]+\)/g,'').replace(/\s+/g,' ').trim();
 
 /* ---------- rendering ---------- */
-const VIEWS={inbox:['Входящие','inbox'],today:['Сегодня','sun'],upcoming:['Предстоящие','next'],calendar:['Календарь','cal'],someday:['Когда-нибудь','moon'],notes:['Заметки','note'],kanban:['Канбан','cols'],habits:['Привычки','leaf'],time:['Время','timer'],review:['Проверка','review'],done:['Выполненные','done']};
+const VIEWS={inbox:['Входящие','inbox'],today:['Сегодня','sun'],upcoming:['Планы','next'],calendar:['Календарь','cal'],someday:['Когда-нибудь','moon'],notes:['Заметки','note'],kanban:['Канбан','cols'],habits:['Привычки','leaf'],time:['Время','timer'],review:['Проверка','review'],done:['Архив','done'],unplaced:['Без проекта','folder']};
+const SIDE_TOP=['inbox','today','upcoming','calendar','habits'],SIDE_BOTTOM=['unplaced','someday','done','trash','settings'],ICV={trash:['Корзина','trash'],settings:['Настройки','gear']};
 const dueReview=()=>activeProj().filter(p=>+p.review>0&&(!p.reviewedAt||p.reviewedAt+p.review*864e5<=Date.now()));
 function counts(){const t=today();let inbox=0,td=0,over=0;for(const x of allTasks()){if(!open(x))continue;if(!x.projectId&&!x.deferred&&!x.parentId)inbox++;const d=dueDay(x);if(d&&d<t)over++;else if(d===t)td++}return{inbox,td,over}}
 function renderSide(){
@@ -195,14 +196,14 @@ function renderSide(){
   const habitsLeft=S.meta.habits.filter(h=>!h.archived&&(h.log?.[today()]||0)<(h.goal||1)).length;
   const run=S.meta.running;const rt=run&&S.tasks.get(run.taskId);
   $('#side').innerHTML=`<div class="brand"><i>${ic('check')}</i>Мой планировщик</div>
-   <label class="search">${ic('search')}<input id="q" placeholder="Поиск задач и заметок" value="${esc(searchQ)}" aria-label="Поиск"></label>
-   <nav class="nav">${Object.keys(VIEWS).filter(k=>!S.meta.settings.hidden.includes(k)).map(k=>{const n=k==='inbox'?c.inbox:k==='today'?c.td+c.over:k==='habits'?habitsLeft:k==='notes'?allNotes().length:k==='review'?dueReview().length:0;return`<button class="${on(k)}" data-nav="${k}" ${k==='inbox'||k==='today'||k==='someday'?`data-dropview="${k}"`:''}>${ic(VIEWS[k][1])}${VIEWS[k][0]}${n?`<span class="n ${k==='today'&&c.over?'warn':''}">${n}</span>`:''}</button>`}).join('')}</nav>
+   
+   <nav class="nav">${SIDE_TOP.filter(k=>!S.meta.settings.hidden.includes(k)).map(k=>{const n=k==='inbox'?c.inbox:k==='today'?c.td+c.over:k==='habits'?habitsLeft:k==='notes'?allNotes().length:k==='review'?dueReview().length:0;return`<button class="${on(k)}" data-nav="${k}" ${k==='inbox'||k==='today'||k==='someday'?`data-dropview="${k}"`:''}>${ic(VIEWS[k][1])}${VIEWS[k][0]}${n?`<span class="n ${k==='today'&&c.over?'warn':''}">${n}</span>`:''}</button>`}).join('')}</nav>
    ${(()=>{const fp=activeProj().filter(p=>p.fav),ft=allTasks().filter(t=>t.fav&&open(t));return fp.length||ft.length?`<div class="sect">Избранное</div><nav class="nav">${fp.map(p=>`<button class="${on('project',p.id)}" data-nav="project" data-id="${p.id}"><span class="dot" style="background:${esc(p.color)}"></span>${p.emoji?esc(p.emoji)+' ':''}${esc(p.title)}</button>`).join('')}${ft.map(t=>`<button data-act="openId" data-id="${t.id}">${ic('star')}${esc(t.title||'Без названия')}</button>`).join('')}</nav>`:''})()}
    <div class="sect" data-droproot="1">Проекты<button data-act="addProject" aria-label="Новый проект">${ic('plus')}</button></div>
    <nav class="nav">${projTree(true).map(([p,d])=>{const hasKids=activeProj().some(c=>c.parentId===p.id);return`<button class="${on('project',p.id)} ${d?'child':''} ${hasKids?'haskids':''}" style="${d>1?`padding-left:${10+d*16}px`:''}" data-nav="project" data-id="${p.id}" draggable="true" data-pdrag="${p.id}" data-dropproj="${p.id}" title="Перетащи: на середину другого проекта — сделать подпроектом, выше или ниже — поставить рядом">${hasKids?`<span class="tw ${p.collapsed?'':'open'}" data-ptoggle="${p.id}" role="button" aria-label="${p.collapsed?'Раскрыть':'Свернуть'}" title="${p.collapsed?'Раскрыть':'Свернуть'}">${ic('right')}</span>`:'<span class="tw0"></span>'}<span class="dot" style="background:${esc(p.color)}"></span>${p.emoji?esc(p.emoji)+' ':''}${esc(p.title)}${pc[p.id]?`<span class="n">${pc[p.id]}</span>`:''}</button>`}).join('')||'<span class="small" style="padding:0 8px">Пока нет проектов</span>'}</nav>
-   ${S.meta.tags.length?`<div class="sect">Теги</div><nav class="nav">${S.meta.tags.map(t=>`<button class="${on('tag',t.id)}" data-nav="tag" data-id="${t.id}"><span class="dot" style="background:${esc(t.color)}"></span>#${esc(t.title)}</button>`).join('')}</nav>`:''}
+   
    <div class="side-foot">${rt?`<div class="runbox">${ic('timer')}<span>${esc(rt.title)}</span><b id="runclock">${clock((Date.now()-run.start)/1000)}</b><button data-act="stopTimer" aria-label="Остановить таймер">${ic('stop')}</button></div>`:''}
-    <nav class="nav"><button class="${on('trash')}" data-nav="trash">${ic('trash')}Корзина</button><button class="${on('settings')}" data-nav="settings">${ic('gear')}Настройки</button></nav></div>`;
+    <nav class="icrow">${SIDE_BOTTOM.filter(k=>!S.meta.settings.hidden.includes(k)).map(k=>{const[l,i]=VIEWS[k]||ICV[k];return`<button class="${on(k)}" data-nav="${k}" ${k==='someday'?'data-dropview="someday"':''} title="${l}" aria-label="${l}">${ic(i)}</button>`}).join('')}</nav></div>`;
 }
 function renderTabbar(){const tabs=[['today','Сегодня','sun'],['inbox','Входящие','inbox'],['notes','Заметки','note'],['habits','Привычки','leaf'],['_menu','Ещё','menu']];$('#tabbar').innerHTML=tabs.map(([k,l,i])=>`<button class="${view.type===k?'on':''}" data-nav="${k}">${ic(i)}${l}</button>`).join('')}
 function renderSync(){const el=$('#sync');if(!el)return;el.innerHTML=syncNote?`<span class="pill err" title="${esc(syncNote)}">${ic('cloud')}${esc(syncNote.length>34?'Нет синхронизации':syncNote)}</span>`:S.user?`<span class="pill ok" title="Всё сохранено в облаке">${ic('cloud')}Синхронизировано</span>`:''}
@@ -224,8 +225,9 @@ const WDS=['вс','пн','вт','ср','чт','пт','сб'];
 function repeatText(t){const k=Math.max(1,parseInt(t.repeatEvery)||1);const base={daily:k>1?`каждые ${k} дн.`:'каждый день',weekdays:'по будням',weekly:k>1?`раз в ${k} нед.`:'каждую неделю',monthly:k>1?`раз в ${k} мес.`:'каждый месяц',yearly:k>1?`раз в ${k} г.`:'каждый год'}[t.repeat]||'';const d=t.repeat==='weekly'&&t.repeatDays?.length?' · '+[1,2,3,4,5,6,0].filter(x=>t.repeatDays.includes(x)).map(x=>WDS[x]).join(', '):'';return base+d+(t.repeatFromDone?' после выполнения':'')}
 function rowHTML(t,ctx,depth=0){const done=!open(t);return`<li ${open(t)?'draggable="true"':''} style="${pcs(t)}" class="task d${Math.min(depth,3)} ${done?'is-done':''} ${t.state==='cancelled'?'is-cancel':''} ${selId===t.id?'is-sel':''}" data-id="${t.id}"><button class="chk pr${t.priority}" data-act="toggle" aria-label="${done?'Вернуть в работу':'Отметить выполненной'}">${done?ic(t.state==='cancelled'?'x':'check'):''}</button><div class="tbody" data-act="open" tabindex="0" role="button"><div class="ttl">${t.title?esc(t.title):'<span class="muted">Без названия</span>'}</div><div class="tmeta">${chipsFor(t,depth||ctx==='project'?(ctx==='project'?'project':'nest'):ctx)}</div></div></li>`}
 function listHTML(arr,ctx){return arr.length?`<ul class="tasks">${arr.map(t=>rowHTML(t,ctx)).join('')}</ul>`:''}
-function nestHTML(arr,ctx){const set=new Set(arr.map(t=>t.id));const ch={};const top=[];for(const t of arr){if(t.parentId&&set.has(t.parentId))(ch[t.parentId]=ch[t.parentId]||[]).push(t);else top.push(t)}const out=[];const walk=(t,d)=>{out.push(rowHTML(t,ctx,d));(ch[t.id]||[]).sort(cmp).forEach(c=>walk(c,d+1))};top.sort(cmp).forEach(t=>walk(t,0));return out.length?`<ul class="tasks">${out.join('')}</ul>`:''}
-function group(title,arr,o={}){if(!arr.length&&!o.always)return'';return`<section class="group"><div class="ghead ${o.warn?'warn':''}"><span class="t">${title}</span><span>${arr.length||''}</span>${o.act?`<span class="act">${o.act}</span>`:''}</div>${o.nest?nestHTML(arr,o.ctx):listHTML(arr,o.ctx)}${o.add?`<button class="addline" data-act="addIn" ${o.add}>${ic('plus')}Добавить задачу</button>`:''}</section>`}
+const SORT=()=>['project','inbox','someday','unplaced'].includes(view.type)?(x,y)=>(x.order-y.order):cmp;
+function nestHTML(arr,ctx){const set=new Set(arr.map(t=>t.id));const ch={};const top=[];for(const t of arr){if(t.parentId&&set.has(t.parentId))(ch[t.parentId]=ch[t.parentId]||[]).push(t);else top.push(t)}const out=[];const walk=(t,d)=>{out.push(rowHTML(t,ctx,d));(ch[t.id]||[]).sort(SORT()).forEach(c=>walk(c,d+1))};top.sort(SORT()).forEach(t=>walk(t,0));return out.length?`<ul class="tasks">${out.join('')}</ul>`:''}
+function group(title,arr,o={}){if(!arr.length&&!o.always)return'';return`<section class="group" ${o.add?'data-dg="1" '+o.add:''}><div class="ghead ${o.warn?'warn':''}"><span class="t">${title}</span><span>${arr.length||''}</span>${o.act?`<span class="act">${o.act}</span>`:''}</div>${o.nest?nestHTML(arr,o.ctx):listHTML(arr,o.ctx)}${o.add?`<button class="addline" data-act="addIn" ${o.add}>${ic('plus')}Добавить задачу</button>`:''}</section>`}
 const emptyHTML=(b,s)=>`<div class="empty"><b>${b}</b>${s}</div>`;
 const doneToggle=()=>`<div class="toolbar"><button class="btn ghost sm" data-act="toggleDone">${showDone?'Скрыть выполненные':'Показать выполненные'}</button></div>`;
 function setHead(t,s){$('#vtitle').innerHTML=t;$('#vsub').textContent=s||''}
@@ -246,6 +248,7 @@ function renderContent(){
     h=`<div class="toolbar"><button class="btn ghost sm" data-act="print">${ic('print')}Напечатать план дня</button></div>`+h;
     if(!over.length&&!td.length)h+=emptyHTML('На сегодня всё чисто','Добавь задачу строкой сверху. Слово «завтра» в тексте сразу поставит дату.');h+=doneToggle();break}
   case 'inbox':{const a=tasks.filter(t=>!t.projectId&&!t.deferred&&(showDone||open(t)));setHead('Входящие','Задачи без проекта');h=(a.length?nestHTML(a):emptyHTML('Входящие пусты','Сюда попадает всё, что ещё не разложено по проектам.'))+doneToggle();break}
+  case 'unplaced':{const a=tasks.filter(t=>!t.projectId&&(showDone||open(t)));setHead('Без проекта','Все задачи вне проектов');h=(a.length?nestHTML(a):emptyHTML('Пусто','Здесь задачи без проекта, с датой и без.'))+doneToggle();break}
   case 'someday':{const a=tasks.filter(t=>t.deferred&&open(t));setHead('Когда-нибудь','Идеи и дела без срока');h=a.length?nestHTML(a):emptyHTML('Пока пусто','Отметь в карточке задачи «Когда-нибудь», и она переедет сюда из списков.');break}
   case 'upcoming':{setHead('Предстоящие','Ближайшие две недели');for(let i=0;i<14;i++){const d=addDays(t0,i);const a=tasks.filter(t=>open(t)&&dueDay(t)===d).sort(cmp);h+=group((i<2?fmtDate(d)+', ':'')+fmtLong(d).toLowerCase(),a,{always:i<7,add:`data-start="${d}"`})}const later=tasks.filter(t=>open(t)&&dueDay(t)>addDays(t0,13)).sort((a,b)=>dueDay(a)<dueDay(b)?-1:1);h+=group('Позже',later);break}
   case 'calendar':{const ws=S.meta.settings.weekStart;const [y,m]=calMonth.split('-').map(Number);const first=new Date(y,m-1,1);const off=(first.getDay()-ws+7)%7;const gs=iso(new Date(y,m-1,1-off));const by={};for(const t of tasks){if(!open(t))continue;for(const d of new Set([t.start,t.deadline].filter(Boolean)))(by[d]=by[d]||[]).push(t)}
@@ -457,7 +460,7 @@ document.addEventListener('keydown',e=>{const typing=e.target.matches&&e.target.
 document.addEventListener('click',async e=>{
   const tw=e.target.closest('[data-ptoggle]');if(tw){const p=proj(tw.dataset.ptoggle);if(p){p.collapsed=!p.collapsed;saveMeta()}return}
   const nav=e.target.closest('[data-nav]');
-  if(nav){const k=nav.dataset.nav;if(k==='_menu'){document.body.classList.toggle('drawer');return}view={type:k,id:nav.dataset.id};searchQ='';showDone=false;selId=selNoteId=null;if(k==='project')projTab='tasks';document.body.classList.remove('drawer');render();$('#content').scrollTop=0;return}
+  if(nav){const k=nav.dataset.nav;closeModal();const qq=$('#q');if(qq)qq.value='';if(k==='_menu'){document.body.classList.toggle('drawer');return}view={type:k,id:nav.dataset.id};searchQ='';showDone=false;selId=selNoteId=null;if(k==='project')projTab='tasks';document.body.classList.remove('drawer');render();$('#content').scrollTop=0;return}
   if(document.body.classList.contains('drawer')&&!e.target.closest('#side')&&!e.target.closest('#menuBtn')){document.body.classList.remove('drawer');return}
   const a=e.target.closest('[data-act]');if(!a)return;const act=a.dataset.act;
   const row=a.closest('.task[data-id],.card[data-id]');const t=row?S.tasks.get(row.dataset.id):(selId?S.tasks.get(selId):null);const n=selNoteId?S.notes.get(selNoteId):null;
@@ -524,6 +527,9 @@ document.addEventListener('click',async e=>{
    case 'clState':{const li=a.closest('[data-cid]');const c=t&&t.checklist.find(x=>x.id===li.dataset.cid);if(c){c.state=(c.state+1)%3;saveTask(t);renderDetail(true)}break}
    case 'clDel':{const li=a.closest('[data-cid]');if(t){t.checklist=t.checklist.filter(x=>x.id!==li.dataset.cid);saveTask(t);renderDetail(true)}break}
    case 'export':exportData();break;
+   case 'qaFocus':{if($('#qa').hidden){view={type:'inbox'};render()}setTimeout(()=>$('#qaInput')?.focus(),30);break}
+   case 'sideToggle':document.body.classList.toggle('sidecollapsed');try{localStorage.setItem('planner-sidecollapsed',document.body.classList.contains('sidecollapsed')?'1':'')}catch(e){}break;
+   case 'tagMenu':{const m=modal(`<h3>Теги</h3>${S.meta.tags.length?`<div class="chips">${S.meta.tags.map(t=>`<button data-nav="tag" data-id="${t.id}"><i style="background:${esc(t.color)}"></i>#${esc(t.title)}</button>`).join('')}</div>`:'<p class="small">Тегов пока нет. Напиши #тег в строке задачи или создай в настройках.</p>'}<div class="mbtns"><button class="btn ghost" data-r="x">Закрыть</button></div>`);m.onclick=e=>{if(e.target===m||e.target.closest('[data-r]'))closeModal()};break}
    case 'csvAll':exportCSV(allTasks(),'zadachi-'+today());break;
    case 'csv':{const p=proj(view.id);if(p)exportCSV(allTasks().filter(x=>x.projectId===p.id),p.title);break}
    case 'print':window.print();break;
@@ -580,7 +586,7 @@ document.addEventListener('change',e=>{const el=e.target;
   else if(el.id==='d-project'){t.projectId=el.value||null;t.groupId=null;saveTask(t);renderDetail(true)}
   else if(el.id==='d-group'){t.groupId=el.value||null;saveTask(t)}});
 document.addEventListener('dragstart',e=>{const pd=e.target.closest&&e.target.closest('[data-pdrag]');if(pd){e.dataTransfer.setData('application/x-proj',pd.dataset.pdrag);e.dataTransfer.effectAllowed='move';return}const c=e.target.closest&&e.target.closest('.card,.wki,.tgev,.mt,.task[draggable]');if(c){e.dataTransfer.setData('text/plain',c.dataset.id);e.dataTransfer.effectAllowed='move'}});
-const clrDrop=()=>document.querySelectorAll('.drop,.drop-before,.drop-after,.drop-in').forEach(x=>x.classList.remove('drop','drop-before','drop-after','drop-in'));
+const clrDrop=()=>document.querySelectorAll('.drop,.drop-before,.drop-after,.drop-in,.drop-out').forEach(x=>x.classList.remove('drop','drop-before','drop-after','drop-in','drop-out'));
 const pZone=(el,e)=>{const r=el.getBoundingClientRect(),y=(e.clientY-r.top)/r.height;return y<.28?'before':y>.72?'after':'in'};
 document.addEventListener('dragover',e=>{const isP=[...(e.dataTransfer?.types||[])].includes('application/x-proj');
   const dp=e.target.closest&&e.target.closest('[data-dropproj]');const dr=e.target.closest&&e.target.closest('[data-droproot]');const dv=e.target.closest&&e.target.closest('[data-dropview]');
@@ -590,7 +596,17 @@ document.addEventListener('dragend',clrDrop);
 const DSEL='[data-pdrag],.tgev,.wki,.mt,.task[draggable],.card[draggable]';
 let PD=null,swallow=false;
 document.addEventListener('dragstart',e=>{if(e.target.closest&&e.target.closest(DSEL))e.preventDefault()},true);
-function pdTarget(x,y){const el=document.elementFromPoint(x,y);if(!el)return null;return el.closest('[data-dropproj],[data-droproot],[data-dropview],[data-dropday],.col')}
+function pdTarget(x,y){const el=document.elementFromPoint(x,y);if(!el)return null;return el.closest((PD&&PD.kind==='task'?'.task[data-id],':'')+'[data-dropproj],[data-droproot],[data-dropview],[data-dropday],.col,[data-dg]')}
+function rowZone(tg,e){const r=tg.getBoundingClientRect();const below=(e.clientY-r.top)>r.height/2;const dx=e.clientX-(PD?PD.x:e.clientX);return dx>40?'in':dx<-40?'out':below?'after':'before'}
+function dropOnRow(t,tg,e,before,undo){const target=S.tasks.get(tg.dataset.id);if(!target)return;const z=PD_LAST.zone;
+  const isDesc=x=>{let c=x;while(c&&c.parentId){if(c.parentId===t.id)return true;c=S.tasks.get(c.parentId)}return false};
+  if(target.id===t.id){if(z==='out'&&t.parentId){const par=S.tasks.get(t.parentId);t.parentId=par?.parentId||null;t.order=(par?.order||Date.now())+1;saveTask(t);toast('Вынесено из подзадач',undo)}else if(z==='in'){const sib=allTasks().filter(x=>x.parentId===t.parentId&&x.projectId===t.projectId&&x.id!==t.id&&x.order<t.order).sort((x,y)=>y.order-x.order)[0];if(sib){t.parentId=sib.id;saveTask(t);toast('Стало подзадачей «'+sib.title+'»',undo)}}return}
+  if(isDesc(target))return;
+  if(z==='in'){t.parentId=target.id;t.projectId=target.projectId;t.groupId=target.groupId;t.order=Date.now();saveTask(t);toast('Стало подзадачей «'+target.title+'»',undo);return}
+  t.parentId=target.parentId||null;t.projectId=target.projectId;t.groupId=target.groupId;t.deferred=target.deferred;
+  const sib=allTasks().filter(x=>x.id!==t.id&&(x.parentId||null)===(target.parentId||null)&&x.projectId===target.projectId&&(x.groupId||null)===(target.groupId||null)).sort((x,y)=>x.order-y.order);const i=sib.indexOf(target);
+  const nb=z==='before'?sib[i-1]:sib[i+1];t.order=nb?(target.order+nb.order)/2:target.order+(z==='before'?-1000:1000);saveTask(t)}
+let PD_LAST={};
 function pdStart(){PD.started=true;const g=document.createElement('div');g.className='dghost';g.textContent=(PD.el.innerText||'').split('\n').filter(Boolean).slice(-1)[0]?.slice(0,40)||'…';document.body.appendChild(g);PD.g=g;PD.el.classList.add('dragging');document.body.classList.add('dnd');if(navigator.vibrate&&PD.touch)navigator.vibrate(15)}
 function pdEnd(){if(!PD)return;clearTimeout(PD.timer);PD.g&&PD.g.remove();PD.el.classList.remove('dragging');document.body.classList.remove('dnd');clrDrop();PD=null}
 document.addEventListener('pointerdown',e=>{if(e.button!==0||PD)return;const el=e.target.closest&&e.target.closest(DSEL);if(!el||e.target.closest('.chk,input,textarea,select,.mv,.del'))return;
@@ -598,8 +614,11 @@ document.addEventListener('pointerdown',e=>{if(e.button!==0||PD)return;const el=
   if(PD.touch)PD.timer=setTimeout(()=>{if(PD&&!PD.started)pdStart()},380)});
 document.addEventListener('pointermove',e=>{if(!PD)return;const dx=e.clientX-PD.x,dy=e.clientY-PD.y,dist=Math.hypot(dx,dy);
   if(!PD.started){if(PD.touch){if(dist>10)pdEnd();return}if(dist<6)return;pdStart()}
+  {const sc=e.target.closest&&document.elementFromPoint(e.clientX,e.clientY)?.closest('#content,#tgbody,#side');if(sc){const r=sc.getBoundingClientRect();if(e.clientY<r.top+40)sc.scrollTop-=14;else if(e.clientY>r.bottom-40)sc.scrollTop+=14}}
   e.preventDefault();PD.g.style.transform=`translate(${e.clientX+12}px,${e.clientY+10}px)`;clrDrop();const tg=pdTarget(e.clientX,e.clientY);PD.tg=tg;PD.cy=e.clientY;if(!tg)return;
   if(PD.kind==='proj'){if(tg.matches('[data-droproot]'))tg.classList.add('drop-in');else if(tg.matches('[data-dropproj]'))tg.classList.add('drop-'+pZone(tg,e))}
+  else if(tg.matches('.task[data-id]')){const z=rowZone(tg,e);PD_LAST.zone=z;tg.classList.add(z==='in'?'drop-in':z==='out'?'drop-out':'drop-'+z)}
+  else if(tg.matches('[data-dg]'))tg.classList.add('drop')
   else if(tg.matches('[data-dropday],.col,[data-dropview],[data-dropproj]'))tg.classList.add(tg.matches('[data-dropday],.col')?'drop':'drop-in')},{passive:false});
 document.addEventListener('touchmove',e=>{if(PD&&PD.started)e.preventDefault()},{passive:false});
 document.addEventListener('pointercancel',pdEnd);
@@ -607,6 +626,8 @@ document.addEventListener('contextmenu',e=>{if(PD&&PD.touch)e.preventDefault()})
 document.addEventListener('pointerup',e=>{if(!PD)return;if(!PD.started){pdEnd();return}const tg=pdTarget(e.clientX,e.clientY),{kind,id}=PD;const ev={clientY:e.clientY};pdEnd();swallow=true;setTimeout(()=>swallow=false,50);if(!tg)return;
   if(kind==='proj'){if(tg.matches('[data-droproot]'))moveProject(id,null,'top');else if(tg.matches('[data-dropproj]'))moveProject(id,tg.dataset.dropproj,pZone(tg,ev));return}
   const t=S.tasks.get(id);if(!t)return;const before=clone(t);const undo=()=>{S.tasks.set(t.id,before);saveTask(before)};
+  if(tg.matches('.task[data-id]')){dropOnRow(t,tg,e,before,undo);return}
+  if(tg.matches('[data-dg]')){t.projectId=tg.dataset.project||t.projectId;t.groupId=tg.dataset.group||null;t.parentId=null;t.order=Date.now();saveTask(t);toast('Перенесено в раздел',undo);return}
   if(tg.matches('[data-dropday]')){const d=tg.dataset.dropday;if(tg.dataset.droptime)t.time=tg.dataset.droptime;else if(tg.dataset.allday)t.time=null;if(t.deadline&&t.start)t.deadline=addDays(t.deadline,Math.round((new Date(d)-new Date(t.start))/864e5));else if(t.deadline&&!t.start)t.deadline=d;if(t.start||!t.deadline)t.start=d;t.deferred=false;saveTask(t);toast('Перенесено на '+fmtDate(d).toLowerCase()+(t.time?', '+t.time:''),undo);return}
   if(tg.matches('.col')){if(t.columnId!==tg.dataset.col){t.columnId=tg.dataset.col;saveTask(t)}return}
   if(tg.matches('[data-dropproj]')){t.projectId=tg.dataset.dropproj;t.groupId=null;t.deferred=false;saveTask(t);toast(`Перенесено в «${proj(t.projectId).title}»`,undo);return}
@@ -622,6 +643,13 @@ document.addEventListener('drop',e=>{const pid=e.dataTransfer.getData('applicati
     saveTask(t);return}const dd=e.target.closest&&e.target.closest('[data-dropday]');if(dd){e.preventDefault();document.querySelectorAll('.drop').forEach(x=>x.classList.remove('drop'));const t=S.tasks.get(e.dataTransfer.getData('text/plain'));const d=dd.dataset.dropday;if(t&&d){const before=clone(t);if(dd.dataset.droptime)t.time=dd.dataset.droptime;else if(dd.dataset.allday)t.time=null;if(t.deadline&&t.start)t.deadline=addDays(t.deadline,Math.round((new Date(d)-new Date(t.start))/864e5));else if(t.deadline&&!t.start)t.deadline=d;if(t.start||!t.deadline)t.start=d;saveTask(t);toast('Перенесено на '+fmtDate(d).toLowerCase()+(t.time?', '+t.time:''),()=>{S.tasks.set(t.id,before);saveTask(before)})}return}const col=e.target.closest&&e.target.closest('.col');if(!col)return;e.preventDefault();col.classList.remove('drop');const t=S.tasks.get(e.dataTransfer.getData('text/plain'));if(t&&t.columnId!==col.dataset.col){t.columnId=col.dataset.col;saveTask(t)}});
 (()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;const b=document.createElement('button');b.type='button';b.className='btn ghost mic';b.setAttribute('aria-label','Надиктовать');b.title='Надиктовать задачу';b.innerHTML=ic('mic');$('#qa').insertBefore(b,$('#qaBtn'));let rec=null;
   b.addEventListener('click',()=>{if(rec){rec.stop();return}rec=new SR();rec.lang='ru-RU';rec.interimResults=false;b.classList.add('on');rec.onresult=ev=>{const txt=[...ev.results].map(r=>r[0].transcript).join(' ');const i=$('#qaInput');i.value=(i.value?i.value+' ':'')+txt;i.focus()};rec.onerror=ev=>{if(ev.error==='not-allowed')toast('Разреши доступ к микрофону')};rec.onend=()=>{rec=null;b.classList.remove('on')};rec.start()})})();
-$('#menuBtn').innerHTML=ic('menu');$('#menuBtn').addEventListener('click',()=>document.body.classList.toggle('drawer'));
+$('#menuBtn').innerHTML=ic('menu');
+(()=>{const tb=document.createElement('div');tb.className='tbar';tb.innerHTML=`<label class="search">${ic('search')}<input id="q" placeholder="Поиск" aria-label="Поиск задач и заметок"></label><button data-act="qaFocus" title="Новая задача (N)" aria-label="Новая задача">${ic('plus')}</button><button data-act="tagMenu" title="Теги" aria-label="Теги" class="hashb">#</button><button data-nav="notes" title="Заметки" aria-label="Заметки" class="opt">${ic('note')}</button><button data-nav="kanban" title="Канбан" aria-label="Канбан" class="opt">${ic('cols')}</button><button data-nav="time" title="Помодоро и время" aria-label="Помодоро и время" class="opt">${ic('timer')}</button><button data-nav="review" title="Проверка проектов" aria-label="Проверка проектов" class="opt">${ic('review')}</button><button data-act="focus" title="Фокус (F)" aria-label="Фокус" class="opt">${ic('focus')}</button><button data-act="sideToggle" title="Свернуть или развернуть левую панель" aria-label="Левая панель" class="opt">${ic('left')}</button>`;$('#sync').before(tb);
+  try{const w=+localStorage.getItem('planner-sw');if(w)document.documentElement.style.setProperty('--sw',w+'px');if(localStorage.getItem('planner-sidecollapsed'))document.body.classList.add('sidecollapsed')}catch(e){}
+  const g=document.createElement('div');g.id='sideGrip';g.title='Потяни, чтобы изменить ширину. Двойной клик — исходная';$('#app').appendChild(g);
+  let st=null;g.addEventListener('pointerdown',e=>{st={x:e.clientX,w:$('#side').getBoundingClientRect().width};g.setPointerCapture(e.pointerId);document.body.classList.add('resizing')});
+  g.addEventListener('pointermove',e=>{if(!st)return;const w=Math.max(180,Math.min(460,st.w+e.clientX-st.x));document.documentElement.style.setProperty('--sw',w+'px')});
+  g.addEventListener('pointerup',()=>{if(!st)return;st=null;document.body.classList.remove('resizing');try{localStorage.setItem('planner-sw',parseInt(getComputedStyle(document.documentElement).getPropertyValue('--sw'))||250)}catch(e){}});
+  g.addEventListener('dblclick',()=>{document.documentElement.style.removeProperty('--sw');try{localStorage.removeItem('planner-sw')}catch(e){}})})();$('#menuBtn').addEventListener('click',()=>document.body.classList.toggle('drawer'));
 window.addEventListener('online',()=>{syncNote='';renderSync()});
 setTimeout(()=>{if(!auth.currentUser)$('#login').hidden=false},1200);
