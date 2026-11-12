@@ -327,6 +327,16 @@ textarea.inp{min-height:90px;resize:vertical;line-height:1.5}
 .trash-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 
 /* added: Singularity-parity features */
+#side .tw,#side .tw0{width:18px;height:18px;flex:none;display:inline-flex;align-items:center;justify-content:center;margin-right:-6px;border-radius:5px;color:var(--muted)}#side .tw:hover{background:var(--line)}#side .tw svg{width:14px;height:14px;transition:transform .15s}#side .tw.open svg{transform:rotate(90deg)}
+.task[style*="--pc"]{box-shadow:inset 3px 0 0 var(--pc)}
+.tgev{background:color-mix(in srgb,var(--pc,var(--accent)) 24%,var(--surface))!important;border-left-color:var(--pc,var(--accent))!important}
+.wki,.mt{background:color-mix(in srgb,var(--pc,var(--accent)) 20%,var(--surface))!important;border-left-color:var(--pc,var(--accent))!important}
+.card[style*="--pc"]{border-left:4px solid var(--pc)}.gbar{background:var(--pc,var(--accent))!important}
+.sched li[style*="--pc"]{box-shadow:inset 3px 0 0 var(--pc);padding-left:8px}
+b.hi{color:var(--hi)}
+.dghost{position:fixed;left:0;top:0;z-index:999;pointer-events:none;background:var(--surface);border:1px solid var(--accent);border-radius:8px;padding:5px 9px;font-size:13px;box-shadow:var(--shadow);max-width:240px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dragging{opacity:.45}body.dnd,body.dnd *{cursor:grabbing!important;user-select:none!important;-webkit-user-select:none!important}
+[data-pdrag],.tgev,.wki,.mt,.task[draggable],.card{-webkit-touch-callout:none}
 #side .nav button.drop-in{background:var(--accent-soft);outline:2px dashed var(--accent);outline-offset:-2px}#side .drop-before{box-shadow:inset 0 3px 0 var(--accent)}#side .drop-after{box-shadow:inset 0 -3px 0 var(--accent)}#side .sect.drop-in{color:var(--accent)}
 #side [data-pdrag]{cursor:grab}.task[draggable]{-webkit-user-drag:element}
 .tg{display:block;width:100%;margin-top:12px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden}
