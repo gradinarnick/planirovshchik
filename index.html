@@ -668,11 +668,10 @@ body{font-family:var(--f-body)}
 @media (max-width:820px){.gclosed .ghead{background:var(--sunk);padding:14px 12px}}
 /* calendar colours and month wheel */
 .cal .wd{color:color-mix(in srgb,var(--fg) 85%,transparent);font-weight:600}
-.cal .wd.we,.cal button.we .d{color:#ff5b5b}
-.cal button.today.we .d{color:#fff}
+.cal .wd.we{color:var(--accent)}
 .cal button.out{background:color-mix(in srgb,var(--fg) 4%,var(--bg))!important}
 .cal button.out .d{opacity:.55}
-.cal button:not(.out) .d{color:var(--fg)}.cal button.we:not(.out) .d{color:#ff5b5b}.cal button.today .d{color:#fff!important}
+.cal button:not(.out) .d{color:var(--fg)}.cal button.today .d{color:#fff!important}
 .caltitle{font:inherit;color:inherit;padding:0;display:inline-flex;align-items:center;gap:4px}.caltitle::after{content:'';width:7px;height:7px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg) translateY(-3px);margin-left:6px}
 .calnav{display:inline-flex;gap:2px;margin-left:6px}.calnav button{width:32px;height:32px;display:grid;place-items:center;border-radius:8px;color:var(--muted)}.calnav button:hover{background:var(--sunk);color:var(--fg)}.calnav svg{width:18px;height:18px}
 .wheel{min-width:min(340px,86vw)}.wh{font-weight:600;text-align:center;margin-bottom:8px}.wcols{position:relative;display:flex;gap:6px;height:200px}
@@ -721,7 +720,7 @@ body{font-family:var(--f-body)}
 <div id="toast" hidden></div>
 <div id="modal" hidden></div>
 
-<script type="module" src="app.js?v=20261113r"></script>
+<script type="module" src="app.js?v=20261113s"></script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
 </body>
 </html>
