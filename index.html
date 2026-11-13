@@ -473,6 +473,7 @@ label.ck{display:flex;align-items:center;gap:8px;cursor:pointer}label.ck input{w
 body.focus #side,body.focus #tabbar,body.focus .hint{display:none!important}body.focus #app{grid-template-columns:minmax(0,1fr)}body.focus.has-detail #app{grid-template-columns:minmax(0,1fr) 380px}
 @media (max-width:820px){.wk{grid-template-columns:minmax(0,1fr)}.wkd{min-height:0}body.focus.has-detail #app{grid-template-columns:minmax(0,1fr)}.grow2{grid-template-columns:45% 1fr}.gscale{left:45%}}
 @media print{#side,#tabbar,#qa,.hint,#detail,.toolbar,#sync,.menu-btn,.addline,#toast,#modal{display:none!important}#app{display:block!important;height:auto}body,#main,#content{overflow:visible!important;height:auto!important;background:#fff!important;color:#000!important}.task .chk{border:1.5px solid #000!important}}
+@media (min-width:821px){body.sidecollapsed:not(.focus) #app{grid-template-columns:minmax(0,1fr)!important}body.sidecollapsed.has-detail:not(.inline-det):not(.focus) #app{grid-template-columns:minmax(0,1fr) 380px!important}}
 </style>
 </head>
 <body>
