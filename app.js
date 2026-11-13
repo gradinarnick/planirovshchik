@@ -717,7 +717,7 @@ function projPlace(tg,e){const rows=[...document.querySelectorAll('#side .nav [d
   if(!PD.dx){PD.dx={};rows.forEach(r=>{if(r.id!==PD.id&&PD.dx[r.d]==null)PD.dx[r.d]=dotX(r)});PD.dx[d0]=PD.dot0=dotX(rows[si])}
   const list=rows.slice(0,si).concat(rows.slice(se));let gi;
   if(tg.dataset.pdrag===PD.id)gi=si;else{const ti=list.findIndex(r=>r.el===tg);if(ti<0)return null;const rc=tg.getBoundingClientRect();gi=(e.clientY-rc.top)<rc.height/2?ti:ti+1}
-  const prev=list[gi-1],next=list[gi];if(!prev&&!next)return null;const maxD=prev?prev.d+1:0,minD=next?Math.min(next.d,maxD):0;
+  const prev=list[gi-1],next=list[gi];if(!prev&&!next)return null;const maxD=prev?prev.d+1:0,minD=0;
   const X=k=>{if(PD.dx[k]!=null)return PD.dx[k];let j=k;while(j>0&&PD.dx[j]==null)j--;return(PD.dx[j]!=null?PD.dx[j]:PD.dot0-d0*16)+(k-j)*16};
   const x=PD.dot0+(e.clientX-PD.x);let D=minD,best=1e9;for(let k=minD;k<=maxD;k++){const v=Math.abs(X(k)-x);if(v<best){best=v;D=k}}
   let parent=null,after=null;for(let i=gi-1;i>=0;i--){const r=list[i];if(r.d===D&&after===null)after=r.id;if(r.d<D){parent=r.id;break}}
