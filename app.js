@@ -249,7 +249,7 @@ function renderContent(){
   case 'today':{const over=tasks.filter(isOver).sort(cmp);const td=tasks.filter(t=>open(t)&&dueDay(t)===t0).sort(cmp);const doneToday=tasks.filter(t=>t.state==='done'&&t.completedAt&&iso(new Date(t.completedAt))===t0);
     setHead('Сегодня',fmtLong(t0));const sch=td.filter(t=>t.time).sort((a,b)=>a.time<b.time?-1:1);const nowT=pad(new Date().getHours())+':'+pad(new Date().getMinutes());
     if(sch.length)h+=`<div class="sched"><ul>${sch.map(t=>`<li data-act="openId" data-id="${t.id}" style="${pcs(t)}"><span class="tm ${t.duration&&t.time<=nowT&&addMin(t.time,t.duration)>nowT?'now':''}">${esc(t.time)}${t.duration?'–'+addMin(t.time,t.duration):''}</span><span>${esc(t.title)}</span></li>`).join('')}</ul></div>`;
-    h+=group('Просрочено',over,{warn:true})+group('На сегодня',td,{always:true,add:`data-start="${t0}"`})+(showDone?group('Сделано сегодня',doneToday):'');
+    h+=(over.length?(S.meta.settings.overOpen?group(`<button class="gfold open" data-x="overFold">Просроченные задачи ${ic('right')}</button>`,over,{warn:true}):`<section class="group gclosed"><div class="ghead warn"><button class="gfold" data-x="overFold"><span>Просроченные задачи</span><b>${over.length}</b>${ic('right')}</button></div></section>`):'')+group('На сегодня',td,{always:true,add:`data-start="${t0}"`})+(showDone?group('Сделано сегодня',doneToday):'');
     h=`<div class="toolbar"><button class="btn ghost sm" data-act="print">${ic('print')}Напечатать план дня</button></div>`+h;
     if(!over.length&&!td.length)h+=emptyHTML('На сегодня всё чисто','Добавь задачу строкой сверху. Слово «завтра» в тексте сразу поставит дату.');h+=doneToggle();break}
   case 'inbox':{const a=tasks.filter(t=>!t.projectId&&!t.deferred&&(showDone||open(t)||keepDone(t)));setHead('Входящие','Задачи без проекта');h=(a.length?nestHTML(a):emptyHTML('Входящие пусты','Сюда попадает всё, что ещё не разложено по проектам.'))+doneToggle();break}
@@ -1157,3 +1157,5 @@ function calMobile(){if(view.type!=='calendar'||innerWidth>820)return;const c=$(
 /* tapping a day in month view on the phone selects it and shows its tasks in the collapsed mode */
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('.cal button[data-d]');if(!b||innerWidth>820||view.type!=='calendar')return;if(e.target.closest('[data-cchk],.mt'))return;calCollapsed=true},true);
 if(!ICONS.grid)ICONS.grid='<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>';
+/* overdue group folds like Singularity */
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-x="overFold"]');if(!b||!S.meta)return;e.stopPropagation();S.meta.settings.overOpen=!S.meta.settings.overOpen;saveMeta();render()},true);

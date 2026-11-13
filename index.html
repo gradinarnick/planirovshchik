@@ -663,6 +663,9 @@ body{font-family:var(--f-body)}
  .mau{font-weight:600}
  #tabbar button span{font-size:12px;font-weight:500}
 }
+.gfold{display:flex;align-items:center;gap:8px;width:100%;font:inherit;color:inherit;text-align:left;padding:0}.gfold span{flex:1}.gfold b{font-weight:500;color:var(--muted)}.gfold svg{width:16px;height:16px;color:var(--muted);transition:transform .15s}.gfold.open svg{transform:rotate(90deg)}
+.gclosed .ghead{cursor:pointer;padding:12px 4px;border-radius:8px}.gclosed .ghead:hover{background:var(--sunk)}
+@media (max-width:820px){.gclosed .ghead{background:var(--sunk);padding:14px 12px}}
 </style>
 </head>
 <body>
@@ -704,7 +707,7 @@ body{font-family:var(--f-body)}
 <div id="toast" hidden></div>
 <div id="modal" hidden></div>
 
-<script type="module" src="app.js?v=20261113p"></script>
+<script type="module" src="app.js?v=20261113q"></script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
 </body>
 </html>
