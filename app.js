@@ -1390,3 +1390,6 @@ document.addEventListener('click',e=>{const pg=e.target.closest&&e.target.closes
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mm]');if(!b||!S.meta||!isM())return;const k=b.dataset.mm;if(!['search','timer','notif','more'].includes(k))return;e.preventDefault();e.stopPropagation();document.body.classList.remove('drawer');closeCtx?.();
   if(k==='more'){sgMoreSheet();return}sgStack=[];sgOpen(k)},true);
 const sgClk=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return(h?h+':':'')+pad(m)+':'+pad(x)};
+/* status bar and navigation bar take the page background instead of green */
+{const syncBar=()=>{const m=document.querySelector('meta[name=theme-color]');if(!m)return;const c=getComputedStyle(document.body).backgroundColor;if(c&&m.content!==c)m.content=c};
+ const _r9=render;render=function(){_r9();syncBar()};setTimeout(syncBar,300);matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>setTimeout(syncBar,50))}
