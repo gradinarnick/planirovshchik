@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="ru">
 <head>
+<script>try{var t=localStorage.getItem('planner-theme')||'night';if(t!=='system')document.documentElement.setAttribute('data-theme',t)}catch(e){document.documentElement.setAttribute('data-theme','night')}</script>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Мой планировщик</title>
@@ -29,6 +31,14 @@ body{margin:0}img{max-width:100%}
   --bg:#141815; --surface:#1c211d; --sunk:#232a24; --fg:#e7ebe5; --muted:#9aa49b; --line:#313932;
   --accent:#72c193; --accent-soft:#233a2c; --on-accent:#0e1a12;
   --hi:#e57a62; --mid:#dba54a; --lo:#93a7bf; --ok:#72c193; --shadow:0 8px 28px rgba(0,0,0,.45); color-scheme:dark}}
+:root[data-theme="night"]{
+  --bg:#111729; --surface:#161d32; --sunk:#0d1222; --fg:#e4e8f2; --muted:#8992aa; --line:#242c44;
+  --accent:#5b8def; --accent-soft:#1f2c4d; --on-accent:#ffffff;
+  --hi:#ec6a57; --mid:#e4a63f; --lo:#7f8db0; --ok:#4fb886; --shadow:0 10px 30px rgba(0,0,0,.5); color-scheme:dark}
+:root[data-theme="gray"]{
+  --bg:#2b2d31; --surface:#313338; --sunk:#232428; --fg:#ebecee; --muted:#9a9ca3; --line:#3c3e44;
+  --accent:#6d8cf0; --accent-soft:#363f5c; --on-accent:#ffffff;
+  --hi:#ed6c5c; --mid:#e2a744; --lo:#8e9ab5; --ok:#55b98a; --shadow:0 10px 30px rgba(0,0,0,.45); color-scheme:dark}
 :root[data-theme="dark"]{
   --bg:#141815; --surface:#1c211d; --sunk:#232a24; --fg:#e7ebe5; --muted:#9aa49b; --line:#313932;
   --accent:#72c193; --accent-soft:#233a2c; --on-accent:#0e1a12;
@@ -327,6 +337,43 @@ textarea.inp{min-height:90px;resize:vertical;line-height:1.5}
 .trash-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 
 /* added: Singularity-parity features */
+/* ---- compact look & feel ---- */
+:root{--f-head:var(--f-body)}
+body{font-size:14.5px}
+#side{background:var(--sunk);gap:10px;padding-block:12px 12px;padding-left:max(10px,env(safe-area-inset-left,0px));padding-right:10px;border-right:1px solid var(--line)}
+.brand{font:600 14.5px/1.2 var(--f-body);padding:4px 6px}.brand i{width:24px;height:24px;border-radius:50%}
+.nav{gap:1px}.nav button{padding:5px 8px;font-size:14px;border-radius:7px;gap:9px;min-height:30px}.nav button svg{width:17px;height:17px;opacity:.85}
+.nav button.on{background:color-mix(in srgb,var(--accent) 18%,transparent);box-shadow:none;font-weight:500}.nav button:hover{background:color-mix(in srgb,var(--fg) 7%,transparent)}
+.nav .n{font-size:12px;color:var(--muted);font-weight:400}
+.sect{font-size:12px;letter-spacing:0;text-transform:none;font-weight:500;padding:6px 8px 2px}
+.top{padding-block:8px;border-bottom:1px solid var(--line);gap:10px;min-height:52px}
+#vtitle,h1#vtitle{font:700 20px/1.25 var(--f-body)}#vsub{font-size:12.5px}
+#qa{padding:8px 20px 0}#qa input{background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:8px 2px}#qa input:focus{border-bottom-color:var(--accent)}#qa .btn{padding:6px 12px;font-size:13px}#qa .mic{border:0;background:transparent}
+.wrap{max-width:900px}
+.ghead{border-bottom:0;font-size:13.5px;color:var(--fg);font-weight:600;padding:12px 4px 4px}.ghead span+span{color:var(--muted);font-weight:400}
+.task{padding:5px 6px;gap:10px;border-bottom:0;border-radius:7px;align-items:center;min-height:34px}
+.task:hover{background:color-mix(in srgb,var(--fg) 5%,transparent)}
+.task.on,.task.sel{background:color-mix(in srgb,var(--accent) 16%,transparent)}
+.chk{width:18px;height:18px;border-width:1.5px;margin-top:0}
+.tmeta{margin-top:1px;font-size:12px;gap:2px 8px}
+.task[style*="--pc"]{box-shadow:none}.task .ttl::after{content:none}
+.task[style*="--pc"] .tmeta .pchip,.task[style*="--pc"] .tmeta span:has(.dot){color:var(--pc)}
+.addline{padding:6px;font-size:14px}
+.btn{padding:7px 12px;border-radius:8px;font-weight:500}.btn.ghost{background:transparent}
+.tabs{margin-top:4px}.tabs button{padding:7px 10px;font-weight:500}
+.card-s{border-radius:12px;border-color:var(--line)}.card-s h2{font:600 15px/1.3 var(--f-body)}
+#detail{background:var(--surface)}.dhead{padding:8px 10px;background:var(--surface)}
+.field>label,.flabel{font-size:12px;letter-spacing:0;text-transform:none;font-weight:500}
+.inp{background:var(--bg);border-radius:7px}
+.icrow{border-top:0}
+.tbar .search{background:var(--bg);border-color:var(--line);height:32px}
+#qaHint{display:none!important}
+.top{flex-wrap:nowrap}.top>div:nth-child(2){flex:0 1 auto;min-width:0}.top #vtitle{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tbar{min-width:0;flex-shrink:1}.tbar .search{width:auto;flex:0 1 200px;min-width:80px}
+@media (max-width:1500px){body.has-detail .tbar .opt,body.has-detail #sync{display:none}}
+/* project "…" menu */
+details.pmore{position:relative;display:inline-block;margin-top:6px}details.pmore>summary{list-style:none;cursor:pointer;width:32px;height:32px;display:grid;place-items:center;border-radius:8px;color:var(--muted)}details.pmore>summary::-webkit-details-marker{display:none}details.pmore>summary:hover,details.pmore[open]>summary{background:var(--sunk);color:var(--fg)}details.pmore svg{width:18px;height:18px}
+.pmenu{position:absolute;z-index:30;left:0;top:36px;min-width:220px;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:5px;display:flex;flex-direction:column}.pmenu .btn{justify-content:flex-start;width:100%;color:var(--fg);border:0;padding:8px 10px}.pmenu .btn:hover{background:var(--sunk)}
+.swatches{display:flex;gap:8px;flex-wrap:wrap}.swatches button{width:28px;height:28px;border-radius:50%;border:2px solid var(--line);font-size:12px;color:var(--muted)}.swatches button.on{outline:2px solid var(--fg);outline-offset:2px}
 #sideGrip{position:fixed;top:0;bottom:0;left:calc(var(--sw,250px) - 3px);width:6px;cursor:col-resize;z-index:35}#sideGrip:hover,body.resizing #sideGrip{background:var(--accent);opacity:.35}body.resizing{cursor:col-resize;user-select:none}
 body.sidecollapsed #app{grid-template-columns:0 minmax(0,1fr)}body.sidecollapsed.has-detail #app{grid-template-columns:0 minmax(0,1fr) 380px}body.sidecollapsed #side,body.sidecollapsed #sideGrip,body.focus #sideGrip{display:none}
 .tbar{display:flex;align-items:center;gap:4px}.tbar>button{width:34px;height:34px;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;color:var(--muted)}.tbar>button:hover{background:var(--sunk);color:var(--fg)}.tbar svg{width:18px;height:18px}.tbar .hashb{font:700 16px/1 var(--f-head,inherit)}
@@ -413,7 +460,7 @@ body.focus #side,body.focus #tabbar,body.focus .hint{display:none!important}body
       <input id="qaInput" placeholder="Новая задача" aria-label="Новая задача">
       <button class="btn" type="submit" id="qaBtn">Добавить</button>
     </form>
-    <div class="hint" id="qaHint">Пиши прямо в строке: «завтра», «в пятницу», «25 декабря», «в 10:00», «напомни за час», «!!» или p1–p3, «#тег», «@проект»</div>
+    <div class="hint" id="qaHint" hidden>Пиши прямо в строке: «завтра», «в пятницу», «25 декабря», «в 10:00», «напомни за час», «!!» или p1–p3, «#тег», «@проект»</div>
     <div id="content"></div>
   </main>
   <section id="detail" hidden aria-label="Карточка"></section>
