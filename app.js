@@ -1093,3 +1093,9 @@ document.addEventListener('click',e=>{const f=e.target.closest&&e.target.closest
 {const _pp=projPlace;projPlace=function(tg,e){const pl=_pp(tg,e);if(!pl||!PD)return pl;const nv=document.querySelector('#side .pnav')||document.querySelector('#side .nav');const left=nv?nv.getBoundingClientRect().left:0;
   if(e.clientX<left+28||(PD.dot0&&e.clientX<PD.dot0-PD.x+e.clientX-0&&false)){let top=null;const rows=[...document.querySelectorAll('#side .nav [data-pdrag]')].map(el=>({id:el.dataset.pdrag,d:+el.dataset.depth||0,el}));
    const i=pl.prev?rows.findIndex(r=>r.el===pl.prev.el):-1;for(let k=i;k>=0;k--){if(rows[k].d===0&&rows[k].id!==PD.id){top=rows[k].id;break}}return{...pl,parent:null,after:top,x:PD.dx&&PD.dx[0]!=null?PD.dx[0]:left+20}}return pl}}
+/* interface size like Singularity "Масштаб интерфейса" */
+function applyZoom(){let z=1;try{z=+(localStorage.getItem('planner-zoom')||(S.meta&&S.meta.settings.zoom)||1)}catch(e){}document.documentElement.style.zoom=z===1?'':String(z)}
+applyZoom();
+{const _sw3=settingsWin;settingsWin=function(){_sw3();if(setTab!=='Темы и оформление')return;const body=document.querySelector('.setbody');if(!body||body.querySelector('.xzoom'))return;let z=1;try{z=+(localStorage.getItem('planner-zoom')||S.meta.settings.zoom||1)}catch(e){}
+  const c=document.createElement('div');c.className='card-s xzoom';c.innerHTML=`<h2>Размер интерфейса</h2><p>Увеличивает или уменьшает всё: текст, кнопки, отступы. Сохраняется для этого устройства.</p><div class="seg">${[[0.9,'90%'],[1,'100%'],[1.1,'110%'],[1.2,'120%'],[1.3,'130%'],[1.4,'140%']].map(([v,l])=>`<button class="${Math.abs(z-v)<.01?'on':''}" data-zm="${v}">${l}</button>`).join('')}</div>`;
+  body.prepend(c);c.onclick=e=>{const b=e.target.closest('[data-zm]');if(!b)return;try{localStorage.setItem('planner-zoom',b.dataset.zm)}catch(err){}S.meta.settings.zoom=+b.dataset.zm;applyZoom();saveMeta()}}}

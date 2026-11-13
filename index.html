@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ru">
 <head>
-<script>try{var t=localStorage.getItem('planner-theme')||'night';if(t!=='system')document.documentElement.setAttribute('data-theme',t)}catch(e){document.documentElement.setAttribute('data-theme','night')}</script>
+<script>try{var zz=localStorage.getItem('planner-zoom');if(zz&&zz!=='1')document.documentElement.style.zoom=zz}catch(e){}</script><script>try{var t=localStorage.getItem('planner-theme')||'night';if(t!=='system')document.documentElement.setAttribute('data-theme',t)}catch(e){document.documentElement.setAttribute('data-theme','night')}</script>
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -621,7 +621,7 @@ body.v-settings #content{position:fixed;inset:0;z-index:70;background:rgba(0,0,0
 <div id="toast" hidden></div>
 <div id="modal" hidden></div>
 
-<script type="module" src="app.js?v=20261113k"></script>
+<script type="module" src="app.js?v=20261113l"></script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
 </body>
 </html>
