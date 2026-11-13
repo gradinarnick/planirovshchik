@@ -1038,3 +1038,58 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 {const _r2=render;render=function(){_r2();if(!S.meta)return;mobileMenuRow();if(view.type==='calendar'){const vt=$('#vtitle');if(vt&&!vt.querySelector('[data-x="calMore"]')){const b=document.createElement('button');b.className='ic pmorebtn2';b.dataset.x='calMore';b.setAttribute('aria-label','Действия календаря');b.innerHTML=ic('dots');vt.appendChild(b)}}}}
 /* vibration when tasks are dropped */
 document.addEventListener('pointerup',()=>{if(document.querySelector('.dragging')&&S.meta&&S.meta.settings.vibMove!==false&&navigator.vibrate)navigator.vibrate(10)},true);
+
+/* ===== Stage 2: task menus and pickers like Singularity ===== */
+const nextWeekend=()=>{const d=new Date();const add=(6-d.getDay()+7)%7||7;return addDays(today(),d.getDay()===6?0:add)};
+const nextMonth=()=>{const d=new Date();return iso(new Date(d.getFullYear(),d.getMonth()+1,1))};
+function setDate(ids,start,time){ids.forEach(id=>{const x=S.tasks.get(id);if(!x)return;x.start=start;x.deferred=false;if(time!==undefined)x.time=time;saveTask(x)})}
+taskMenu=function(t,x,y){closeCtx();if(selId!==t.id){selId=t.id;selNoteId=null;render();renderDetail(true)}const many=multi.size>1&&multi.has(t.id);const ids=many?[...multi]:[t.id];const ev=S.meta.settings.evening||'18:00';
+  const each=f=>()=>{ids.forEach(id=>{const z=S.tasks.get(id);if(z){f(z);saveTask(z)}})};
+  const dateSub=()=>[{label:'Настроить вручную',icon:'calday',kb:'Ctrl D',run:()=>datePicker(t)},{label:'Сегодня',icon:'star',run:()=>setDate(ids,today())},{label:'Сегодня вечером',icon:'moon',run:()=>setDate(ids,today(),ev)},{label:'Отложить до завтра',icon:'sun2',run:()=>setDate(ids,addDays(today(),1))},{label:'На выходных',icon:'sofa',run:()=>setDate(ids,nextWeekend())},{label:'В следующем месяце',icon:'calgrid',run:()=>setDate(ids,nextMonth())},{label:'Когда-нибудь',icon:'rainbow',run:each(z=>{z.deferred=true;z.start=null;z.time=null})},{label:'Очистить дату и время',icon:'x',run:each(z=>{z.start=null;z.time=null})},'-',{label:'Крайний срок',icon:'flag',kb:'Ctrl Y',run:()=>revealParam('deadline','#d-deadline')}];
+  const priSub=()=>[{label:t.pinned?'Открепить':'Закрепить',icon:'pin',kb:'Ctrl 0',run:each(z=>{z.pinned=!z.pinned})},{label:'Высокий приоритет',icon:'prio',cls:'danger',kb:'Ctrl 1',check:t.priority===0,run:each(z=>{z.priority=0})},{label:'Средний приоритет',icon:'prio',kb:'Ctrl 2',check:t.priority===1,run:each(z=>{z.priority=1})},{label:'Низкий приоритет',icon:'prio',kb:'Ctrl 3',check:t.priority===2,run:each(z=>{z.priority=2})}];
+  const doneSub=()=>[{label:open(t)?'Отметить как выполненную':'Вернуть в работу',icon:'check',kb:'⇧ Space',run:()=>ids.forEach(id=>{const z=S.tasks.get(id);if(z)toggleTask(z)})},{label:'Отметить как отменённую',icon:'x',run:each(z=>{z.state='cancelled';z.completedAt=Date.now()})}];
+  const f=d=>new Date(d).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}).replace(',','');
+  const items=[{label:'Установить дату и время',icon:'calday',sub:dateSub},{label:'Повторять',icon:'repeat',kb:'Ctrl ⇧ R',run:()=>doTM('repeat',t)},{label:'Запустить Помодоро',icon:'timer',run:()=>doTM('pomo',t)},{label:'Конвертировать в заметку',icon:'note',run:()=>doTM('toNote',t)},'-',
+   {label:'Приоритет',icon:'prio',sub:priSub},{label:'Завершить задачу',icon:'done',sub:doneSub},'-',
+   {label:t.lock?'Пароль…':'Установить пароль',icon:'lock',kb:'Ctrl ⇧ X',run:()=>doTM('lock',t)},{label:t.fav?'Убрать из избранного':'Добавить в избранное',icon:'heart',kb:'Ctrl ⇧ L',run:()=>doTM('fav',t)},{label:'Изменить проект',icon:'move',kb:'Ctrl ⇧ M',run:()=>projPicker(ids,x,y)},{label:'Перейти к событию в календаре',icon:'calgrid',dis:!t.start,run:()=>{calDay=t.start;calMonth=t.start.slice(0,7);calMode='day';goView('calendar')}},'-',
+   {label:'Новая подзадача',icon:'plus',kb:'Alt ⇧ N',run:()=>doTM('sub',t)},{label:'Вырезать',icon:'cut',kb:'Ctrl X',run:()=>doTM('cut',t)},{label:'Копировать',icon:'copy',kb:'Ctrl C',run:()=>doTM('copy',t)},{label:'Дублировать',icon:'copy',run:()=>doTM('dup',t)},{label:'Удалить',icon:'trash',kb:'Del',run:()=>doTM(many?'bulkDel':'del',t)},'-',{label:'Скопировать ссылку',icon:'link',run:()=>doTM('link',t)},{head:`Создана ${f(t.createdAt||Date.now())}${t.updatedAt?' · изменена '+f(t.updatedAt):''}`}];
+  if(many)items.unshift({head:`Выбрано задач: ${ids.length}`});
+  popMenu(items,x,y)};
+if(!ICONS.pin)ICONS.pin='<path d="M9 4h6l-1 5 3 3v2H7v-2l3-3z"/><path d="M12 14v6"/>';
+/* project picker like «Куда» */
+function projPicker(ids,x,y){closeCtx();const m=document.createElement('div');m.className='ctxmenu ppick';const cur=S.tasks.get(ids[0])?.projectId||null;
+  const rows=()=>{const q=(m.querySelector('input')?.value||'').toLowerCase();return[[null,'Входящие','inbox',0],...projTree(false).map(([p,d])=>[p.id,p.title,p,d])].filter(r=>!q||r[1].toLowerCase().includes(q)).map(([id,l,i,d])=>`<button data-pp="${id||''}" style="padding-left:${10+d*16}px">${typeof i==='string'?ic(i):picon(i)}<span>${esc(l)}</span>${(id||null)===cur?ic('check'):''}</button>`).join('')};
+  m.innerHTML=`<label class="search">${ic('search')}<input placeholder="Куда" aria-label="Куда переместить"></label><div class="pplist">${rows()}</div>`;document.body.appendChild(m);const r=m.getBoundingClientRect();m.style.left=Math.max(6,Math.min(x,innerWidth-r.width-6))+'px';m.style.top=Math.max(6,Math.min(y,innerHeight-r.height-6))+'px';
+  const inp=m.querySelector('input');inp.oninput=()=>m.querySelector('.pplist').innerHTML=rows();setTimeout(()=>inp.focus(),30);
+  m.onclick=e=>{const b=e.target.closest('[data-pp]');if(!b)return;const pid=b.dataset.pp||null;ids.forEach(id=>{const z=S.tasks.get(id);if(z){z.projectId=pid;z.groupId=null;saveTask(z)}});closeCtx();toast('Перемещено')}}
+/* date picker popover */
+function datePicker(t,anchor){closeCtx();const ws=S.meta.settings.weekStart;let d=t.start||today(),tm=t.time||'',te=t.duration&&t.time?addMin(t.time,t.duration):'',rem=t.remind??'';const ev=S.meta.settings.evening||'18:00';
+  const m=document.createElement('div');m.className='ctxmenu dpick';document.body.appendChild(m);
+  const month=ym=>{const [Y,M]=ym.split('-').map(Number);const first=new Date(Y,M-1,1);const off=(first.getDay()-ws+7)%7;const n=new Date(Y,M,0).getDate();return`<div class="djm"><b>${first.toLocaleDateString('ru-RU',{month:'long',year:'numeric'})}</b><div class="djg">${(ws?['Пн','Вт','Ср','Чт','Пт','Сб','Вс']:['Вс','Пн','Вт','Ср','Чт','Пт','Сб']).map(x=>`<span>${x}</span>`).join('')}${'<span></span>'.repeat(off)}${[...Array(n)].map((_,i)=>{const dd=`${Y}-${pad(M)}-${pad(i+1)}`;return`<button data-dd="${dd}" class="${dd===today()?'tdy':''} ${dd===d?'td':''}">${i+1}</button>`}).join('')}</div></div>`};
+  const remL={'':'Напомнить','0':'Во время','5':'За 5 минут','15':'За 15 минут','30':'За 30 минут','60':'За 1 час','1440':'За 1 день'};
+  const draw=()=>{const m0=d.slice(0,7);const [Y,M]=m0.split('-').map(Number);const m1=iso(new Date(Y,M,1)).slice(0,7);
+   m.innerHTML=`<div class="dph">${d?new Date(d+'T00:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}):'Без даты'}${tm?' '+tm:''}</div>
+   <div class="dpq"><button data-q="today" title="Сегодня">${ic('star')}</button><button data-q="eve" title="Сегодня вечером">${ic('moon')}</button><button data-q="tom" title="Завтра">${ic('sun2')}</button><button data-q="we" title="На выходных">${ic('sofa')}</button><button data-q="nw" title="На следующей неделе">${ic('calday')}</button><button data-q="some" title="Когда-нибудь">${ic('rainbow')}</button></div>
+   <div class="dpcal">${month(m0)}${month(m1)}</div>
+   <div class="dpt">${ic('timer')}<input type="time" id="dpT1" value="${tm}" aria-label="Время начала"><span>–</span><input type="time" id="dpT2" value="${te}" aria-label="Время окончания"><button data-q="clrT" class="ic" aria-label="Убрать время">${ic('x')}</button></div>
+   <button class="dpr" data-q="rem">${ic('bell')}<span>${remL[String(rem)]||('За '+rem+' мин')}</span></button>
+   <button class="dpr" data-q="rep">${ic('repeat')}<span>${t.repeat?esc(repeatText(t)):'Повторять'}</span></button>
+   <div class="dpb"><button data-q="cancel" class="btn ghost">Отмена</button><button data-q="ok" class="btn">OK</button></div>`};
+  draw();const place=()=>{const r=m.getBoundingClientRect();const a=anchor?anchor.getBoundingClientRect():{left:innerWidth/2-r.width/2,bottom:innerHeight/2-r.height/2};m.style.left=Math.max(6,Math.min(a.left,innerWidth-r.width-6))+'px';m.style.top=Math.max(6,Math.min(a.bottom+4,innerHeight-r.height-6))+'px'};place();
+  m.addEventListener('input',e=>{if(e.target.id==='dpT1')tm=e.target.value;if(e.target.id==='dpT2')te=e.target.value});
+  m.onclick=e=>{const b=e.target.closest('[data-dd],[data-q]');if(!b)return;e.stopPropagation();if(b.dataset.dd){d=b.dataset.dd;draw();return}const q=b.dataset.q;
+   if(q==='today'){d=today()}else if(q==='eve'){d=today();tm=ev}else if(q==='tom'){d=addDays(today(),1)}else if(q==='we'){d=nextWeekend()}else if(q==='nw'){const x=new Date();d=addDays(today(),((ws-x.getDay()+7)%7)||7)}
+   else if(q==='some'){t.deferred=true;t.start=null;t.time=null;saveTask(t);closeCtx();return}else if(q==='clrT'){tm='';te=''}
+   else if(q==='rem'){const opts=['','0','5','15','30','60','1440'];rem=opts[(opts.indexOf(String(rem))+1)%opts.length]}
+   else if(q==='rep'){closeCtx();doTM('repeat',t);return}else if(q==='cancel'){closeCtx();return}
+   else if(q==='ok'){t.start=d;t.deferred=false;t.time=tm||null;if(tm&&te){const [a1,b1]=tm.split(':').map(Number),[a2,b2]=te.split(':').map(Number);const dur=(a2*60+b2)-(a1*60+b1);t.duration=dur>0?dur:t.duration}t.remind=rem===''?null:rem;saveTask(t);closeCtx();renderDetail(true);return}
+   draw()}}
+/* Ctrl+D opens the picker */
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&e.code==='KeyD'&&selId&&!(e.target.matches&&e.target.matches('input,textarea'))){e.preventDefault();e.stopImmediatePropagation();const t=S.tasks.get(selId);if(t)datePicker(t)}},true);
+/* in the task card: clicking the date field opens the picker */
+document.addEventListener('click',e=>{const f=e.target.closest&&e.target.closest('#detail [data-param="date"] label');if(!f||!selId)return;const t=S.tasks.get(selId);if(t){e.preventDefault();datePicker(t,f)}},true);
+/* touch: dragging a project far to the left makes it top level; hit-test rows even when the finger is at the screen edge */
+{const _pdT=pdTarget;pdTarget=function(x,y){if(PD&&PD.kind==='proj'){const nv=document.querySelector('#side .pnav')||document.querySelector('#side .nav');if(nv){const r=nv.getBoundingClientRect();x=Math.min(Math.max(x,r.left+40),r.right-12)}}return _pdT(x,y)}}
+{const _pp=projPlace;projPlace=function(tg,e){const pl=_pp(tg,e);if(!pl||!PD)return pl;const nv=document.querySelector('#side .pnav')||document.querySelector('#side .nav');const left=nv?nv.getBoundingClientRect().left:0;
+  if(e.clientX<left+28||(PD.dot0&&e.clientX<PD.dot0-PD.x+e.clientX-0&&false)){let top=null;const rows=[...document.querySelectorAll('#side .nav [data-pdrag]')].map(el=>({id:el.dataset.pdrag,d:+el.dataset.depth||0,el}));
+   const i=pl.prev?rows.findIndex(r=>r.el===pl.prev.el):-1;for(let k=i;k>=0;k--){if(rows[k].d===0&&rows[k].id!==PD.id){top=rows[k].id;break}}return{...pl,parent:null,after:top,x:PD.dx&&PD.dx[0]!=null?PD.dx[0]:left+20}}return pl}}

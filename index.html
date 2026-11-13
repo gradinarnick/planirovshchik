@@ -572,6 +572,14 @@ body.v-settings #content{position:fixed;inset:0;z-index:70;background:rgba(0,0,0
  #calJump{display:none}
  .top .menu-btn{display:none!important}
 }
+/* stage2 pickers */
+.ppick{width:300px;padding:8px}.ppick .search{width:100%;margin-bottom:6px}.pplist{max-height:50vh;overflow:auto;display:flex;flex-direction:column}.pplist button{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:7px;text-align:left}.pplist button:hover{background:color-mix(in srgb,var(--accent) 16%,transparent)}.pplist span{flex:1}.pplist svg{width:16px;height:16px;color:var(--muted)}.pplist>button>svg:last-child{color:var(--accent)}
+.dpick{width:300px;padding:12px;display:flex;flex-direction:column;gap:8px}.dph{font-weight:600;padding:2px 4px}.dpq{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:8px}.dpq button{width:36px;height:32px;display:grid;place-items:center;border-radius:8px;color:var(--muted)}.dpq button:hover{background:var(--sunk);color:var(--fg)}.dpq svg{width:18px;height:18px}
+.dpcal{max-height:230px;overflow-y:auto}.dpick .djg button.td{background:var(--accent);color:var(--on-accent)}.dpick .djg button.tdy{color:var(--accent);font-weight:700}
+.dpt{display:flex;align-items:center;gap:6px}.dpt svg{width:17px;height:17px;color:var(--muted)}.dpt input{flex:1;min-width:0;background:var(--sunk);border:1px solid var(--line);border-radius:7px;padding:5px;color:var(--fg);font:inherit}
+.dpr{display:flex;align-items:center;gap:10px;padding:7px 4px;color:var(--fg);text-align:left}.dpr svg{width:17px;height:17px;color:var(--muted)}
+.dpb{display:flex;gap:8px}.dpb .btn{flex:1}
+@media (min-width:821px){.mrow{display:none!important}}
 </style>
 </head>
 <body>
@@ -613,7 +621,7 @@ body.v-settings #content{position:fixed;inset:0;z-index:70;background:rgba(0,0,0
 <div id="toast" hidden></div>
 <div id="modal" hidden></div>
 
-<script type="module" src="app.js?v=20261113i"></script>
+<script type="module" src="app.js?v=20261113k"></script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
 </body>
 </html>
