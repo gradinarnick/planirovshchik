@@ -804,7 +804,7 @@ setTimeout(()=>{if(!auth.currentUser)$('#login').hidden=false},1200);
 
 /* mobile menu as bottom sheet: swipe down to close */
 (()=>{let st=null;document.addEventListener('touchstart',e=>{const sd=$('#side');if(innerWidth>820||!document.body.classList.contains('drawer')||!sd||!sd.contains(e.target))return;const r=sd.getBoundingClientRect(),y=e.touches[0].clientY;st={y,head:y-r.top<48,top:sd.scrollTop<=0,on:false}},{passive:true});
-  document.addEventListener('touchmove',e=>{if(!st)return;const sd=$('#side');const dy=e.touches[0].clientY-st.y;if(!st.on){if(Math.abs(dy)<6)return;if(dy>0&&(st.head||st.top))st.on=true;else{st=null;return}sd.style.transition='none'}e.preventDefault();sd.style.transform=`translateY(${Math.max(0,dy)}px)`},{passive:false});
+  document.addEventListener('touchmove',e=>{if(!st)return;const sd=$('#side');const dy=e.touches[0].clientY-st.y;if(!st.on){if(Math.abs(dy)<6)return;if(dy>0&&st.head&&!PD)st.on=true;else{st=null;return}sd.style.transition='none'}e.preventDefault();sd.style.transform=`translateY(${Math.max(0,dy)}px)`},{passive:false});
   document.addEventListener('touchend',e=>{if(!st)return;const sd=$('#side');const on=st.on,y0=st.y;st=null;if(!on)return;const dy=(e.changedTouches[0]?.clientY||y0)-y0;sd.style.transition='';sd.style.transform='';if(dy>110)document.body.classList.remove('drawer')});
 })();
 
@@ -1006,7 +1006,7 @@ function cchk(t){return`<i class="cchk ${!open(t)?'on':''}" data-cchk="${t.id}" 
 document.addEventListener('click',e=>{const c=e.target.closest&&e.target.closest('[data-cchk]');if(!c||!S.meta)return;e.preventDefault();e.stopPropagation();const t=S.tasks.get(c.dataset.cchk);if(t){toggleTask(t);if(S.meta.settings.vibDone!==false&&navigator.vibrate)navigator.vibrate(15)}},true);
 document.addEventListener('pointerdown',e=>{if(e.target.closest&&e.target.closest('[data-cchk]'))e.stopPropagation()},true);
 /* menu sheet: bottom icon row for phone (search, timer, habits, sections with pins) */
-function mobileMenuRow(){const sd=$('#side');if(!sd||sd.querySelector('.mrow'))return;const r=document.createElement('nav');r.className='mrow';r.innerHTML=`<button data-mm="search" aria-label="Поиск">${ic('search')}</button><button data-mm="timer" aria-label="Помодоро">${ic('timer')}</button><button data-mm="habits" aria-label="Привычки">${ic('target')}</button><button data-mm="settings" aria-label="Настройки">${ic('gear')}</button><button data-mm="more" aria-label="Разделы и нижняя панель">${ic('dots')}</button>`;sd.appendChild(r);
+function mobileMenuRow(){const sd=$('#side');if(!sd||sd.querySelector('.mrow'))return;const r=document.createElement('nav');r.className='mrow';r.innerHTML=`<button data-mm="search" aria-label="Поиск">${ic('search')}</button><button data-mm="timer" aria-label="Помодоро">${ic('timer')}</button><button data-mm="habits" aria-label="Привычки">${ic('target')}</button><button data-mm="more" aria-label="Разделы и нижняя панель">${ic('dots')}</button>`;sd.appendChild(r);
   r.onclick=e=>{const b=e.target.closest('[data-mm]');if(!b)return;const k=b.dataset.mm;document.body.classList.remove('drawer');
    if(k==='search')mSearch();else if(k==='timer')timersWin();else if(k==='habits')goView('habits');else if(k==='settings')goView('settings');
    else{const all=[['inbox'],['today'],['upcoming'],['calendar'],['habits'],['unplaced'],['someday'],['done'],['trash'],['notes']];const pins=S.meta.settings.mbar||['today','upcoming'];
@@ -1097,5 +1097,32 @@ document.addEventListener('click',e=>{const f=e.target.closest&&e.target.closest
 function applyZoom(){let z=1;try{z=+(localStorage.getItem('planner-zoom')||(S.meta&&S.meta.settings.zoom)||1)}catch(e){}document.documentElement.style.zoom=z===1?'':String(z)}
 applyZoom();
 {const _sw3=settingsWin;settingsWin=function(){_sw3();if(setTab!=='Темы и оформление')return;const body=document.querySelector('.setbody');if(!body||body.querySelector('.xzoom'))return;let z=1;try{z=+(localStorage.getItem('planner-zoom')||S.meta.settings.zoom||1)}catch(e){}
-  const c=document.createElement('div');c.className='card-s xzoom';c.innerHTML=`<h2>Размер интерфейса</h2><p>Увеличивает или уменьшает всё: текст, кнопки, отступы. Сохраняется для этого устройства.</p><div class="seg">${[[0.9,'90%'],[1,'100%'],[1.1,'110%'],[1.2,'120%'],[1.3,'130%'],[1.4,'140%']].map(([v,l])=>`<button class="${Math.abs(z-v)<.01?'on':''}" data-zm="${v}">${l}</button>`).join('')}</div>`;
-  body.prepend(c);c.onclick=e=>{const b=e.target.closest('[data-zm]');if(!b)return;try{localStorage.setItem('planner-zoom',b.dataset.zm)}catch(err){}S.meta.settings.zoom=+b.dataset.zm;applyZoom();saveMeta()}}}
+  const c=document.createElement('div');c.className='card-s xzoom';c.innerHTML=`<h2>Размер интерфейса</h2><div class="zrow"><span>A</span><input type="range" min="0.8" max="1.6" step="0.05" value="${z}" id="zoomR" aria-label="Размер интерфейса"><b>A</b><output id="zoomV">${Math.round(z*100)}%</output></div><p class="small">Меняет размер текста, кнопок и отступов. Сохраняется для этого устройства.</p>`;
+  body.prepend(c);const r=c.querySelector('#zoomR');r.oninput=()=>{c.querySelector('#zoomV').textContent=Math.round(r.value*100)+'%'};r.onchange=()=>{try{localStorage.setItem('planner-zoom',r.value)}catch(err){}S.meta.settings.zoom=+r.value;applyZoom();saveMeta()}}}
+/* ===== live drag of projects: row lifts, others make room (like Singularity) ===== */
+let LV=null;
+showPLine=function(){};
+function lvInit(){const side=$('#side');const rows=[...document.querySelectorAll('#side .pnav [data-pdrag]')].map(el=>{const r=el.getBoundingClientRect();return{el,id:el.dataset.pdrag,d:+el.dataset.depth||0,top:r.top,h:r.height}});
+  const si=rows.findIndex(r=>r.id===PD.id);if(si<0)return null;let se=si+1;while(se<rows.length&&rows[se].d>rows[si].d)se++;const block=rows.slice(si,se);const H=block.reduce((a,r)=>a+r.h,0);
+  const list=rows.slice(0,si).concat(rows.slice(se).map(r=>({...r,top:r.top-H})));const nv=side.querySelector('.pnav').getBoundingClientRect();
+  block.forEach(r=>r.el.classList.add('lvdrag'));rows.forEach(r=>r.el.classList.add('lvrow'));if(PD.g)PD.g.style.display='none';
+  return{rows,si,se,block,H,list,d0:rows[si].d,top0:rows[si].top,left:nv.left,sc0:side.scrollTop,side}}
+function lvMove(e){if(!LV)LV=lvInit();if(!LV)return;const dy=e.clientY-PD.y+(LV.side.scrollTop-LV.sc0),dx=e.clientX-PD.x;const c=LV.top0+dy+LV.block[0].h/2;
+  let gi=0;for(const r of LV.list){if(r.top+r.h/2<c)gi++;else break}
+  const prev=LV.list[gi-1];const maxD=prev?prev.d+1:0;let D=Math.max(0,Math.min(maxD,LV.d0+Math.round(dx/22)));if(e.clientX<LV.left+28)D=0;
+  let parent=null,after=null;for(let i=gi-1;i>=0;i--){const r=LV.list[i];if(r.d===D&&after===null)after=r.id;if(r.d<D){parent=r.id;break}}
+  LV.res={parent,after};
+  LV.block.forEach(r=>{r.el.style.transform=`translate(${(D-LV.d0)*16}px,${dy}px)`});
+  LV.list.forEach((r,j)=>{const orig=j<LV.si?j:j+(LV.se-LV.si);let sh=0;if(j<LV.si&&j>=gi)sh=LV.H;else if(j>=LV.si&&j<gi)sh=-LV.H;r.el.style.transform=sh?`translateY(${sh}px)`:''})}
+function lvClear(){if(!LV)return;LV.rows.forEach(r=>{r.el.style.transform='';r.el.classList.remove('lvdrag','lvrow')});LV=null}
+document.addEventListener('pointermove',e=>{if(PD&&PD.started&&PD.kind==='proj'&&e.target.closest&&(e.target.closest('#side')||LV)){lvMove(e)}},true);
+document.addEventListener('pointerup',e=>{if(!(PD&&PD.started&&PD.kind==='proj'&&LV))return;e.stopImmediatePropagation();const id=PD.id,res=LV.res;lvClear();pdEnd();swallow=true;setTimeout(()=>swallow=false,50);if(res)moveProjectTo(id,res.parent,res.after)},true);
+document.addEventListener('pointercancel',()=>{if(LV){lvClear();pdEnd()}},true);
+/* while dragging with a finger, don't let the page or sheet scroll */
+document.addEventListener('touchmove',e=>{if(PD&&PD.started)e.preventDefault()},{passive:false});
+/* phone menu: account row with the email and the settings gear, then search of sections and projects (like the app) */
+function mobileAcct(){const sd=$('#side');if(!sd||sd.querySelector('.macct'))return;const u=S.user;const d=document.createElement('div');d.className='macct';
+  d.innerHTML=`<div class="mau">${u?.photoURL?`<img src="${esc(u.photoURL)}" alt="" referrerpolicy="no-referrer">`:`<i>${esc((u?.email||'?')[0].toUpperCase())}</i>`}<span>${esc(u?.email||'')}</span><button data-ma="set" aria-label="Настройки">${ic('gear')}</button></div><label class="search">${ic('search')}<input placeholder="Поиск разделов и проектов" aria-label="Поиск разделов и проектов"></label>`;
+  sd.querySelector('.brand')?.after(d);d.querySelector('[data-ma=set]').onclick=()=>{document.body.classList.remove('drawer');goView('settings')};
+  const inp=d.querySelector('input');inp.oninput=()=>{const q=inp.value.trim().toLowerCase();sd.querySelectorAll('.nav>button').forEach(b=>{b.style.display=!q||b.textContent.toLowerCase().includes(q)?'':'none'})}}
+{const _r3=render;render=function(){_r3();if(S.meta)mobileAcct()}}

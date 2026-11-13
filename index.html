@@ -581,6 +581,18 @@ body.v-settings #content{position:fixed;inset:0;z-index:70;background:rgba(0,0,0
 .dpb{display:flex;gap:8px}.dpb .btn{flex:1}
 @media (min-width:821px){.mrow{display:none!important}}
 #side .pnav .tw0{display:none!important}
+/* live project drag */
+.lvrow{transition:transform .16s ease}
+.lvrow.lvdrag{transition:none;position:relative;z-index:5;background:color-mix(in srgb,var(--accent) 22%,var(--surface))!important;box-shadow:0 8px 22px rgba(0,0,0,.4);border-radius:9px;opacity:1!important}
+body.dnd #side .pnav button.dragging{opacity:1}
+.zrow{display:flex;align-items:center;gap:10px}.zrow input{flex:1}.zrow span{font-size:12px}.zrow b{font-size:19px}.zrow output{min-width:46px;text-align:right;font-weight:600}
+.macct{display:none}
+@media (max-width:820px){
+ #side .brand{display:none}
+ .macct{display:flex;flex-direction:column;gap:8px;padding:2px 2px 8px}
+ .mau{display:flex;align-items:center;gap:10px;background:var(--sunk);border-radius:10px;padding:8px 10px}.mau img,.mau i{width:30px;height:30px;border-radius:50%;flex:none}.mau i{display:grid;place-items:center;background:#13b5cf;color:#fff;font-style:normal}.mau span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mau button{width:34px;height:34px;display:grid;place-items:center;color:var(--muted)}.mau svg{width:21px;height:21px}
+ .macct .search{width:100%}
+}
 </style>
 </head>
 <body>
@@ -622,7 +634,7 @@ body.v-settings #content{position:fixed;inset:0;z-index:70;background:rgba(0,0,0
 <div id="toast" hidden></div>
 <div id="modal" hidden></div>
 
-<script type="module" src="app.js?v=20261113l"></script>
+<script type="module" src="app.js?v=20261113m"></script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
 </body>
 </html>
