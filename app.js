@@ -196,12 +196,12 @@ function renderSide(){
   const on=(t,id)=>view.type===t&&(id===undefined||view.id===id)?'on':'';
   const habitsLeft=S.meta.habits.filter(h=>!h.archived&&(h.log?.[today()]||0)<(h.goal||1)).length;
   const run=S.meta.running;const rt=run&&S.tasks.get(run.taskId);
-  $('#side').innerHTML=`<div class="brand"><i>${ic('check')}</i>Мой планировщик</div>
+  $('#side').innerHTML=`<div class="brand"><i>${ic('check')}</i><span class="bname">Мой планировщик</span><span class="ssync ${syncNote?'err':''}" title="${syncNote?esc(syncNote):'Синхронизировано'}">${ic(syncNote?'cloud':'cloudok')}</span><button class="ic bmenu" data-x="appMenu" title="Меню" aria-label="Меню">${ic('dots')}</button></div>
    
    <nav class="nav">${SIDE_TOP.filter(k=>!S.meta.settings.hidden.includes(k)).map(k=>{const n=k==='inbox'?c.inbox:k==='today'?c.td+c.over:k==='habits'?habitsLeft:k==='notes'?allNotes().length:k==='review'?dueReview().length:0;return`<button class="${on(k)}" data-nav="${k}" ${k==='inbox'||k==='today'||k==='someday'?`data-dropview="${k}"`:''}>${ic(VIEWS[k][1])}${VIEWS[k][0]}${n?`<span class="n ${k==='today'&&c.over?'warn':''}">${n}</span>`:''}</button>`}).join('')}</nav>
-   ${(()=>{const fp=activeProj().filter(p=>p.fav),ft=allTasks().filter(t=>t.fav&&open(t));return fp.length||ft.length?`<div class="sect">Избранное</div><nav class="nav">${fp.map(p=>`<button class="${on('project',p.id)}" data-nav="project" data-id="${p.id}"><span class="dot" style="background:${esc(p.color)}"></span>${p.emoji?esc(p.emoji)+' ':''}${esc(p.title)}</button>`).join('')}${ft.map(t=>`<button data-act="openId" data-id="${t.id}">${ic('star')}${esc(t.title||'Без названия')}</button>`).join('')}</nav>`:''})()}
-   <div class="sect" data-droproot="1">Проекты<button data-act="addProject" aria-label="Новый проект">${ic('plus')}</button></div>
-   <nav class="nav">${projTree(true).map(([p,d])=>{const hasKids=activeProj().some(c=>c.parentId===p.id);return`<button class="${on('project',p.id)} ${d?'child':''} ${hasKids?'haskids':''}" style="${d>1?`padding-left:${10+d*16}px`:''}" data-nav="project" data-id="${p.id}" draggable="true" data-pdrag="${p.id}" data-dropproj="${p.id}" data-depth="${d}" title="Перетащи выше или ниже. Сдвинь вправо — станет подпроектом, влево под точку главного проекта — станет равным ему">${hasKids?`<span class="tw ${p.collapsed?'':'open'}" data-ptoggle="${p.id}" role="button" aria-label="${p.collapsed?'Раскрыть':'Свернуть'}" title="${p.collapsed?'Раскрыть':'Свернуть'}">${ic('right')}</span>`:'<span class="tw0"></span>'}<span class="dot" style="background:${esc(p.color)}"></span>${p.emoji?esc(p.emoji)+' ':''}${esc(p.title)}${pc[p.id]?`<span class="n">${pc[p.id]}</span>`:''}</button>`}).join('')||'<span class="small" style="padding:0 8px">Пока нет проектов</span>'}</nav>
+   ${(()=>{const fp=activeProj().filter(p=>p.fav),ft=allTasks().filter(t=>t.fav&&open(t));return fp.length||ft.length?`<div class="sect">Избранное</div><nav class="nav">${fp.map(p=>`<button class="${on('project',p.id)}" data-nav="project" data-id="${p.id}">${picon(p)}<span class="ptl">${esc(p.title)}</span></button>`).join('')}${ft.map(t=>`<button data-act="openId" data-id="${t.id}">${ic('star')}${esc(t.title||'Без названия')}</button>`).join('')}</nav>`:''})()}
+   <div class="sect psect" data-droproot="1"><span>Мои проекты</span><button class="padd" data-act="addProject" aria-label="Новый проект" title="Новый проект">${ic('plus')}</button><button class="pcol ${S.meta.settings.projHidden?'shut':''}" data-x="projHide" aria-label="Свернуть список проектов" title="Свернуть или развернуть список">${ic('down')}</button></div>
+   <nav class="nav pnav" ${S.meta.settings.projHidden?'hidden':''}>${projTree(true).map(([p,d])=>{const hasKids=activeProj().some(c=>c.parentId===p.id);return`<button class="${on('project',p.id)} ${d?'child':'ptop'} ${hasKids?'haskids':''}" style="--pc:${esc(p.color)};${d>1?`padding-left:${10+d*16}px`:''}" data-nav="project" data-id="${p.id}" draggable="true" data-pdrag="${p.id}" data-dropproj="${p.id}" data-depth="${d}" title="Перетащи выше или ниже. Сдвинь вправо — станет подпроектом, влево под точку главного проекта — станет равным ему">${hasKids?`<span class="tw ${p.collapsed?'':'open'}" data-ptoggle="${p.id}" role="button" aria-label="${p.collapsed?'Раскрыть':'Свернуть'}" title="${p.collapsed?'Раскрыть':'Свернуть'}">${ic('right')}</span>`:'<span class="tw0"></span>'}${picon(p)}<span class="ptl">${esc(p.title)}</span></button>`}).join('')}<button class="newp" data-act="addProject">${ic('plus')}Новый проект</button></nav>
    
    <div class="side-foot">${rt?`<div class="runbox">${ic('timer')}<span>${esc(rt.title)}</span><b id="runclock">${clock((Date.now()-run.start)/1000)}</b><button data-act="stopTimer" aria-label="Остановить таймер">${ic('stop')}</button></div>`:''}
     <nav class="icrow">${SIDE_BOTTOM.filter(k=>!S.meta.settings.hidden.includes(k)).map(k=>{const[l,i]=VIEWS[k]||ICV[k];return`<button class="${on(k)}" data-nav="${k}" ${k==='someday'?'data-dropview="someday"':''} title="${l}" aria-label="${l}">${ic(i)}</button>`}).join('')}</nav></div>`;
@@ -230,7 +230,7 @@ const WDS=['вс','пн','вт','ср','чт','пт','сб'];
 function repeatText(t){const k=Math.max(1,parseInt(t.repeatEvery)||1);const base={daily:k>1?`каждые ${k} дн.`:'каждый день',weekdays:'по будням',weekly:k>1?`раз в ${k} нед.`:'каждую неделю',monthly:k>1?`раз в ${k} мес.`:'каждый месяц',yearly:k>1?`раз в ${k} г.`:'каждый год'}[t.repeat]||'';const d=t.repeat==='weekly'&&t.repeatDays?.length?' · '+[1,2,3,4,5,6,0].filter(x=>t.repeatDays.includes(x)).map(x=>WDS[x]).join(', '):'';return base+d+(t.repeatFromDone?' после выполнения':'')}
 function rowHTML(t,ctx,depth=0){const done=!open(t);return`<li ${open(t)?'draggable="true"':''} style="${pcs(t)}" class="task d${Math.min(depth,3)} ${done?'is-done':''} ${t.state==='cancelled'?'is-cancel':''} ${selId===t.id?'is-sel':''}" data-id="${t.id}"><button class="chk pr${t.priority}" data-act="toggle" aria-label="${done?'Вернуть в работу':'Отметить выполненной'}">${done?ic(t.state==='cancelled'?'x':'check'):''}</button><div class="tbody" data-act="open" tabindex="0" role="button"><div class="ttl">${t.title?esc(t.title):'<span class="muted">Без названия</span>'}</div><div class="tmeta">${chipsFor(t,depth||ctx==='project'?(ctx==='project'?'project':'nest'):ctx)}</div></div></li>`}
 function listHTML(arr,ctx){return arr.length?`<ul class="tasks">${arr.map(t=>rowHTML(t,ctx)).join('')}</ul>`:''}
-const SORT=()=>{const base=['project','inbox','someday','unplaced'].includes(view.type)?(x,y)=>(x.order-y.order):cmp;return(x,y)=>((y.pinned?1:0)-(x.pinned?1:0))||base(x,y)};
+const SORT=()=>{const base=['project','inbox','someday','unplaced'].includes(view.type)?(x,y)=>(x.order-y.order):cmp;const m=(S.meta.settings.sorts||{})[view.type+(view.id||'')];const f=(m&&SORTF[m])||base;return(x,y)=>((y.pinned?1:0)-(x.pinned?1:0))||f(x,y)};
 function nestHTML(arr,ctx){const set=new Set(arr.map(t=>t.id));const ch={};const top=[];for(const t of arr){if(t.parentId&&set.has(t.parentId))(ch[t.parentId]=ch[t.parentId]||[]).push(t);else top.push(t)}const out=[];const walk=(t,d)=>{out.push(rowHTML(t,ctx,d));(ch[t.id]||[]).sort(SORT()).forEach(c=>walk(c,d+1))};top.sort(SORT()).forEach(t=>walk(t,0));return out.length?`<ul class="tasks">${out.join('')}</ul>`:''}
 function group(title,arr,o={}){if(!arr.length&&!o.always)return'';return`<section class="group" ${o.add?'data-dg="1" '+o.add:''}><div class="ghead ${o.warn?'warn':''}"><span class="t">${title}</span><span>${arr.length||''}</span>${o.act?`<span class="act">${o.act}</span>`:''}</div>${o.nest?nestHTML(arr,o.ctx):listHTML(arr,o.ctx)}${o.add?`<button class="addline" data-act="addIn" ${o.add}>${ic('plus')}Добавить задачу</button>`:''}</section>`}
 const emptyHTML=(b,s)=>`<div class="empty"><b>${b}</b>${s}</div>`;
@@ -283,7 +283,7 @@ function renderContent(){
     if(projTab==='notes'){h+=`<div class="toolbar"><button class="btn sm" data-act="newNote" data-project="${p.id}">${ic('plus')}Заметка</button></div>`+(pn.length?noteCards(pn):emptyHTML('В проекте нет заметок','Сюда удобно складывать планы, тексты, ссылки и файлы по проекту.'));break}
     if(projTab==='gantt'){h+=ganttHTML(tasks.filter(t=>t.projectId===p.id&&open(t)));break}
     const a=tasks.filter(t=>t.projectId===p.id&&(showDone||open(t)||keepDone(t))&&!(S.meta.settings.hideTpl&&t.repeat&&t.start&&t.start>t0));const groups=S.meta.groups.filter(g=>g.projectId===p.id).sort((x,y)=>x.order-y.order);
-    h+=`<details class="pmore"><summary aria-label="Действия с проектом" title="Действия с проектом">${ic('more')}</summary><div class="pmenu"><button class="btn ghost sm" data-act="addGroup">${ic('plus')}Раздел</button><button class="btn ghost sm" data-act="addSubProject">${ic('plus')}Подпроект</button><button class="btn ghost sm" data-act="editProject">${ic('edit')}Изменить</button><button class="btn ghost sm" data-act="pFav">${ic('star')}${p.fav?'Из избранного':'В избранное'}</button><button class="btn ghost sm" data-act="focus">${ic('focus')}Фокус</button><button class="btn ghost sm" data-act="csv">CSV</button><button class="btn ghost sm" data-act="toggleDone">${showDone?'Скрыть выполненные':'Показать выполненные'}</button><button class="btn ghost sm" data-act="archDone">${ic('done')}Архивировать выполненные</button><button class="btn ghost sm" data-act="projKanban">${ic('cols')}Открыть как канбан</button><button class="btn ghost sm" data-act="projNotebook">${ic('note')}${p.notebook?'Сделать обычным проектом':'Конвертировать в блокнот'}</button><button class="btn ghost sm" data-act="projArchive">${ic('folder')}Архивировать проект</button></div></details>`;
+    h+=`<button class="ic pmorebtn2" data-x="projMenu" data-id="${p.id}" title="Действия с проектом" aria-label="Действия с проектом">${ic('dots')}</button>`;
     h+=group('Без раздела',a.filter(t=>!t.groupId||!groupOf(t.groupId)),{always:!groups.length,nest:true,ctx:'project',add:`data-project="${p.id}"`});
     for(const g of groups)h+=group(esc(g.title),a.filter(t=>t.groupId===g.id),{always:true,nest:true,ctx:'project',add:`data-project="${p.id}" data-group="${g.id}"`,act:`<button data-act="editGroup" data-id="${g.id}" aria-label="Переименовать раздел">${ic('edit')}</button><button data-act="delGroup" data-id="${g.id}" aria-label="Удалить раздел">${ic('trash')}</button>`});break}
   case 'tag':{const g=tagOf(view.id);if(!g){view={type:'today'};return renderContent()}setHead('#'+esc(g.title),'');const a=tasks.filter(t=>t.tags.includes(g.id)&&(showDone||open(t)||keepDone(t))).sort(cmp);const nn=allNotes().filter(n=>n.tags.includes(g.id));h=(a.length?listHTML(a):'')+(nn.length?`<section class="group"><div class="ghead"><span class="t">Заметки</span></div>${noteCards(nn)}</section>`:'')+(!a.length&&!nn.length?emptyHTML('С этим тегом пока ничего нет','Тег можно поставить в карточке или написать #'+esc(g.title)+' в строке добавления.'):'')+doneToggle();break}
@@ -327,7 +327,7 @@ function renderContent(){
       <div class="seg" style="margin-bottom:8px">${[['min','Минимум'],['std','Стандарт'],['all','Всё']].map(([v,l])=>`<button data-act="setS" data-k="preset" data-v="${v}" class="${JSON.stringify([...(S.meta.settings.params||PRESETS.std)].sort())===JSON.stringify([...PRESETS[v]].sort())?'on':''}">${l}</button>`).join('')}</div>
       <div class="chips">${PARAMS.map(([k,l,i])=>`<button class="${(S.meta.settings.params||PRESETS.std).includes(k)?'on':''}" data-act="setS" data-k="param" data-v="${k}">${ic(i)}${l}</button>`).join('')}</div>
       <label class="srow ck"><input type="checkbox" data-sk="threePane" ${S.meta.settings.threePane!==false?'checked':''}><span>Трёхпанельный режим: карточка задачи справа. Если выключить — карточка открывается под задачей в списке</span></label>
-      <p style="margin-top:12px">Верхний тулбар</p><div class="chips">${[['qaFocus','Новая задача','plus'],['tagMenu','Теги','tag'],['notes','Заметки','note'],['kanban','Канбан','cols'],['time','Помодоро','timer'],['review','Проверка','review'],['focus','Фокус','focus'],['sideToggle','Скрыть панель','left']].map(([k,l,i])=>`<button class="${S.meta.settings.tbHidden.includes(k)?'':'on'}" data-act="setS" data-k="tb" data-v="${k}">${ic(i)}${l}</button>`).join('')}</div>
+      <p style="margin-top:12px">Верхний тулбар</p><div class="chips">${[['qaFocus','Новая задача','plus'],['dictate','Диктовка','wave'],['twoPane','Двухпанельный режим','panel'],['dateJump','Переход к дате','calday'],['timers','Помодоро','timer'],['notif','Уведомления','bell'],['sideToggle','Свернуть панель','dleft']].map(([k,l,i])=>`<button class="${S.meta.settings.tbHidden.includes(k)?'':'on'}" data-act="setS" data-k="tb" data-v="${k}">${ic(i)}${l}</button>`).join('')}</div>
       <p style="margin-top:12px">Список задач</p><div class="chips">${[['icons','Иконки'],['tags','Теги'],['path','Путь до задачи (проект)'],['stats','Счётчики в разделах']].map(([k,l])=>`<button class="${S.meta.settings.list[k]!==false?'on':''}" data-act="setS" data-k="list.${k}">${l}</button>`).join('')}</div>
       <label class="srow ck"><input type="checkbox" data-sk="dim" ${S.meta.settings.dim?'checked':''}><span>Фокусировать на рабочей области: затенять левую панель, пока курсор не над ней</span></label>
       <label class="srow ck"><input type="checkbox" data-sk="toc" ${S.meta.settings.toc!==false?'checked':''}><span>Оглавление в длинных заметках (от трёх заголовков)</span></label></div>
@@ -408,7 +408,7 @@ function bulkBar(){let b=$('#bulkbar');if(multi.size<2){b?.remove();return}if(!b
   b.innerHTML=`<b>Выбрано: ${multi.size}</b><button data-bulk="bulkDone">${ic('check')}Выполнить</button><button data-bulk="bulkToday">${ic('cal')}Сегодня</button><button data-bulk="bulkTomorrow">Завтра</button><button data-bulk="bulkProject">${ic('folder')}Проект</button><button data-bulk="bulkDel">${ic('trash')}Удалить</button><button data-bulk="clear" aria-label="Снять выделение">${ic('x')}</button>`;
   b.onclick=e=>{const k=e.target.closest('[data-bulk]')?.dataset.bulk;if(!k)return;if(k==='clear'){multi.clear();render();return}const t=S.tasks.get([...multi][0]);if(t)doTM(k,t)}}
 function applyUI(){if(!S.meta)return;const st=S.meta.settings,b=document.body,L=st.list||{};b.classList.toggle('lo-noicons',L.icons===false);b.classList.toggle('lo-notags',L.tags===false);b.classList.toggle('lo-nopath',L.path===false);b.classList.toggle('lo-nostats',L.stats===false);b.classList.toggle('dimside',!!st.dim);b.classList.toggle('inline-det',st.threePane===false);b.classList.toggle('v-cal',view.type==='calendar');
-  document.querySelectorAll('.tbar>button').forEach(x=>x.hidden=(st.tbHidden||[]).includes(x.dataset.act||x.dataset.nav))}
+  document.querySelectorAll('.tbar>button').forEach(x=>x.hidden=(st.tbHidden||[]).includes(x.dataset.act||x.dataset.nav||x.dataset.x))}
 function placeInline(){if(S.meta.settings.threePane!==false)return;const d=$('#detail');const row=selId&&document.querySelector(`.task[data-id="${selId}"]`);if(d&&row&&!d.hidden){let li=row.nextElementSibling;if(!li||!li.classList.contains('inline-host')){li=document.createElement('li');li.className='inline-host';row.after(li)}li.appendChild(d)}else if(d&&d.parentElement!==$('#app'))$('#app').appendChild(d)}
 function renderDetail(force){
   const el=$('#detail');const t=selId&&S.tasks.get(selId);const n=!t&&selNoteId&&S.notes.get(selNoteId);document.body.classList.toggle('has-detail',!!(t||n));
@@ -713,7 +713,7 @@ let PD=null,swallow=false;
 document.addEventListener('dragstart',e=>{if(e.target.closest&&e.target.closest(DSEL))e.preventDefault()},true);
 function projPlace(tg,e){const rows=[...document.querySelectorAll('#side .nav [data-pdrag]')].map(el=>({el,id:el.dataset.pdrag,d:+el.dataset.depth||0}));
   const si=rows.findIndex(r=>r.id===PD.id);if(si<0)return null;const d0=rows[si].d;let se=si+1;while(se<rows.length&&rows[se].d>d0)se++;
-  const dotX=r=>{const q=r.el.querySelector('.dot');if(!q)return 0;const b=q.getBoundingClientRect();return b.left+b.width/2};
+  const dotX=r=>{const q=r.el.querySelector('.pico,.dot');if(!q)return 0;const b=q.getBoundingClientRect();return b.left+b.width/2};
   if(!PD.dx){PD.dx={};rows.forEach(r=>{if(r.id!==PD.id&&PD.dx[r.d]==null)PD.dx[r.d]=dotX(r)});PD.dx[d0]=PD.dot0=dotX(rows[si])}
   const list=rows.slice(0,si).concat(rows.slice(se));let gi;
   if(tg.dataset.pdrag===PD.id)gi=si;else{const ti=list.findIndex(r=>r.el===tg);if(ti<0)return null;const rc=tg.getBoundingClientRect();gi=(e.clientY-rc.top)<rc.height/2?ti:ti+1}
@@ -774,7 +774,7 @@ document.addEventListener('drop',e=>{const pid=e.dataTransfer.getData('applicati
 (()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;const b=document.createElement('button');b.type='button';b.className='btn ghost mic';b.setAttribute('aria-label','Надиктовать');b.title='Надиктовать задачу';b.innerHTML=ic('mic');$('#qa').insertBefore(b,$('#qaBtn'));let rec=null;
   b.addEventListener('click',()=>{if(rec){rec.stop();return}rec=new SR();rec.lang='ru-RU';rec.interimResults=false;b.classList.add('on');rec.onresult=ev=>{const txt=[...ev.results].map(r=>r[0].transcript).join(' ');const i=$('#qaInput');i.value=(i.value?i.value+' ':'')+txt;i.focus()};rec.onerror=ev=>{if(ev.error==='not-allowed')toast('Разреши доступ к микрофону')};rec.onend=()=>{rec=null;b.classList.remove('on')};rec.start()})})();
 $('#menuBtn').innerHTML=ic('menu');
-(()=>{const tb=document.createElement('div');tb.className='tbar';tb.innerHTML=`<label class="search">${ic('search')}<input id="q" placeholder="Поиск" aria-label="Поиск задач и заметок"></label><button data-act="qaFocus" title="Новая задача (N)" aria-label="Новая задача">${ic('plus')}</button><button data-act="tagMenu" title="Теги" aria-label="Теги" class="hashb">#</button><button data-nav="notes" title="Заметки" aria-label="Заметки" class="opt">${ic('note')}</button><button data-nav="kanban" title="Канбан" aria-label="Канбан" class="opt">${ic('cols')}</button><button data-nav="time" title="Помодоро и время" aria-label="Помодоро и время" class="opt">${ic('timer')}</button><button data-nav="review" title="Проверка проектов" aria-label="Проверка проектов" class="opt">${ic('review')}</button><button data-act="focus" title="Фокус (F)" aria-label="Фокус" class="opt">${ic('focus')}</button><button data-act="sideToggle" title="Свернуть или развернуть левую панель" aria-label="Левая панель" class="opt">${ic('left')}</button>`;$('#sync').before(tb);
+(()=>{const tb=document.createElement('div');tb.className='tbar';tb.innerHTML=`<button data-act="qaFocus" title="Новая задача (N)" aria-label="Новая задача">${ic('plus')}</button><button data-x="dictate" class="dict" title="Надиктовать задачу" aria-label="Надиктовать задачу">${ic('wave')}</button><label class="search">${ic('search')}<input id="q" placeholder="Поиск" aria-label="Поиск задач и заметок"></label><button data-x="twoPane" title="Двухпанельный режим: карточка задачи под задачей в списке" aria-label="Двухпанельный режим">${ic('panel')}</button><button data-x="dateJump" title="Переход к дате" aria-label="Переход к дате">${ic('calday')}</button><button data-x="timers" title="Помодоро" aria-label="Помодоро">${ic('timer')}</button><button data-x="notif" class="notifb" title="Уведомления" aria-label="Уведомления">${ic('bell')}</button><button data-act="sideToggle" title="Свернуть или развернуть левую панель" aria-label="Левая панель">${ic('dleft')}</button>`;$('#sync').before(tb);
   try{const w=+localStorage.getItem('planner-sw');if(w)document.documentElement.style.setProperty('--sw',w+'px');if(localStorage.getItem('planner-sidecollapsed'))document.body.classList.add('sidecollapsed')}catch(e){}
   const g=document.createElement('div');g.id='sideGrip';g.title='Потяни, чтобы изменить ширину. Двойной клик — исходная';$('#app').appendChild(g);
   let st=null;g.addEventListener('pointerdown',e=>{st={x:e.clientX,w:$('#side').getBoundingClientRect().width};g.setPointerCapture(e.pointerId);document.body.classList.add('resizing')});
@@ -807,3 +807,196 @@ setTimeout(()=>{if(!auth.currentUser)$('#login').hidden=false},1200);
   document.addEventListener('touchmove',e=>{if(!st)return;const sd=$('#side');const dy=e.touches[0].clientY-st.y;if(!st.on){if(Math.abs(dy)<6)return;if(dy>0&&(st.head||st.top))st.on=true;else{st=null;return}sd.style.transition='none'}e.preventDefault();sd.style.transform=`translateY(${Math.max(0,dy)}px)`},{passive:false});
   document.addEventListener('touchend',e=>{if(!st)return;const sd=$('#side');const on=st.on,y0=st.y;st=null;if(!on)return;const dy=(e.changedTouches[0]?.clientY||y0)-y0;sd.style.transition='';sd.style.transform='';if(dy>110)document.body.classList.remove('drawer')});
 })();
+
+/* ===== Stage 1: Singularity-like shell (toolbar, app menu, sidebar, project menu, sort, bottom bar, settings window) ===== */
+Object.assign(ICONS,{
+ star:'<path d="M12 3.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.8 6.8 19.5l1-5.8-4.2-4.1 5.8-.8z"/>',
+ calday:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4M10 13.5l1.5-1v5"/><path d="M13.5 12.5H16l-1.6 5"/>',
+ calgrid:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4M8 13.5h.01M12 13.5h.01M16 13.5h.01M8 17h.01M12 17h.01M16 17h.01"/>',
+ target:'<circle cx="12" cy="12" r="8"/><path d="M12 7.5a4.5 4.5 0 1 0 4.5 4.5"/><circle cx="12" cy="12" r="1.4"/>',
+ shuffle:'<path d="M4 7h3.5l9 10H20M4 17h3.5l2.5-2.8M14 9.8L16.5 7H20M17.5 4.5L20 7l-2.5 2.5M17.5 14.5L20 17l-2.5 2.5"/>',
+ rainbow:'<path d="M3.5 17a8.5 8.5 0 0 1 17 0"/><path d="M7.5 17a4.5 4.5 0 0 1 9 0"/>',
+ history:'<path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M4.5 4.5V8H8"/><path d="M12 8.5v3.8l2.6 1.7"/>',
+ layers:'<path d="M12 4l8 4.5-8 4.5-8-4.5z"/><path d="M4 13l8 4.5 8-4.5"/>',
+ sort:'<path d="M4 7h16M8 12h12M12 17h8"/>',
+ wave:'<path d="M4 10.5v3M7.5 7v10M11 4v16M14.5 8v8M18 10v4"/>',
+ panel:'<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M10 5v14"/>',
+ dleft:'<path d="M12 6l-6 6 6 6M18 6l-6 6 6 6"/>',
+ down:'<path d="M6 9l6 6 6-6"/>',
+ heart:'<path d="M12 19s-7-4.4-7-9.2A3.8 3.8 0 0 1 12 7.6a3.8 3.8 0 0 1 7 2.2C19 14.6 12 19 12 19z"/>',
+ expand:'<path d="M5 9V5h4M19 15v4h-4"/>',collapse:'<path d="M9 5v4H5M15 19v-4h4"/>',
+ refresh:'<path d="M19 12a7 7 0 0 1-12.2 4.7M5 12a7 7 0 0 1 12.2-4.7"/><path d="M17.5 3.5v4h-4M6.5 20.5v-4h4"/>',
+ undo:'<path d="M9 7L5 11l4 4"/><path d="M5 11h9a5 5 0 0 1 0 10h-2"/>',
+ kbd:'<rect x="3" y="7" width="18" height="11" rx="2"/><path d="M7 11h.01M11 11h.01M15 11h.01M7 14.5h10"/>',
+ info:'<circle cx="12" cy="12" r="8"/><path d="M12 11v5M12 8h.01"/>',
+ full:'<path d="M5 9V5h4M15 5h4v4M19 15v4h-4M9 19H5v-4"/>',
+ dots:'<circle cx="5.5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="18.5" cy="12" r="1.4"/>',
+ palette:'<path d="M12 4a8 8 0 1 0 0 16c1.2 0 1.6-.9 1.2-1.8-.5-1 .2-2.2 1.3-2.2H17a3 3 0 0 0 3-3c0-4.9-3.6-9-8-9z"/><circle cx="8" cy="11" r="1"/><circle cx="11" cy="7.8" r="1"/><circle cx="15" cy="8.5" r="1"/>',
+ move:'<path d="M12 4v16M4 12h16M12 4l-2.5 2.5M12 4l2.5 2.5M12 20l-2.5-2.5M12 20l2.5-2.5M4 12l2.5-2.5M4 12l2.5 2.5M20 12l-2.5-2.5M20 12l-2.5 2.5"/>',
+ prio:'<circle cx="12" cy="12" r="8"/><path d="M12 7.5v5.5M12 16h.01"/>',
+ paste:'<rect x="6" y="5" width="12" height="15" rx="2"/><path d="M9 5V3.5h6V5"/>',
+ csv:'<rect x="4" y="5" width="16" height="14" rx="2"/><path d="M8 10.5a1.5 1.5 0 1 0 0 3M11 10.5h-1v1.5h1v1.5h-1M14 10.5l1 3 1-3"/>',
+ notebook:'<path d="M6 4h10a2 2 0 0 1 2 2v14H8a2 2 0 0 1-2-2z"/><path d="M9 8h6M9 11.5h6M9 15h3"/>',
+ list2:'<rect x="5" y="4" width="14" height="16" rx="2"/><path d="M8.5 8h7M8.5 12h7M8.5 16h7"/>',
+ square:'<rect x="5" y="5" width="14" height="14" rx="3"/>',
+ calx:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4M10 13l4 4M14 13l-4 4"/>',
+ sun2:'<circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6L7 7M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/>',
+ sofa:'<path d="M5 11V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v3"/><path d="M3 13a2 2 0 0 1 4 0v2h10v-2a2 2 0 0 1 4 0v4H3z"/><path d="M5 17v2M19 17v2"/>'
+});
+Object.assign(VIEWS,{today:['Сегодня','star'],upcoming:['Планы','calday'],calendar:['Календарь','calgrid'],habits:['Привычки','target'],someday:['Когда-нибудь','rainbow'],done:['Архив','history'],unplaced:['Без проекта','shuffle']});
+if(!VIEWS.tag)VIEWS.tag=['Теги','tag'];
+{const im={dictate:'wave',twoPane:'panel',dateJump:'calday',timers:'timer',notif:'bell'};document.querySelectorAll('.tbar>button').forEach(b=>{const k=b.dataset.x||b.dataset.act;const n=im[k]||(k==='sideToggle'?'dleft':k==='qaFocus'?'plus':null);if(n)b.innerHTML=ic(n)})}
+
+/* project icon: ring with progress (or emoji) like Singularity */
+let _pstat=null,_pstatAt=0;
+function pstats(){if(_pstat&&Date.now()-_pstatAt<300)return _pstat;const m={};for(const t of allTasks()){if(!t.projectId||t.parentId)continue;const o=m[t.projectId]||(m[t.projectId]={n:0,d:0});o.n++;if(!open(t))o.d++}_pstat=m;_pstatAt=Date.now();return m}
+function picon(p){if(p.emoji)return`<span class="pico emo">${esc(p.emoji)}</span>`;const st=pstats()[p.id]||{n:0,d:0};const fr=st.n?st.d/st.n:0;const kidsP=S.meta.projects.some(c=>c.parentId===p.id&&!c.archived);const r=6.2,C=2*Math.PI*r;
+  return`<span class="pico" style="color:${esc(p.color)}"><svg viewBox="0 0 ${kidsP?24:20} 20" aria-hidden="true"><circle cx="10" cy="10" r="${r}" fill="none" stroke="currentColor" stroke-width="1.9" ${fr?'opacity=".38"':''}/>${fr?`<circle cx="10" cy="10" r="${r}" fill="none" stroke="currentColor" stroke-width="1.9" stroke-dasharray="${(C*fr).toFixed(2)} ${C.toFixed(2)}" transform="rotate(-90 10 10)" stroke-linecap="round"/>`:''}${kidsP?'<path d="M17.6 4.6a7.6 7.6 0 0 1 0 10.8" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>':''}</svg></span>`}
+
+/* sorting like Singularity */
+const SORTF={prio:(a,b)=>(a.priority-b.priority)||(a.order-b.order),prioR:(a,b)=>(b.priority-a.priority)||(a.order-b.order),
+ time:(a,b)=>((dueDay(a)||'9')+(a.time||'99')).localeCompare((dueDay(b)||'9')+(b.time||'99'))||(a.order-b.order),
+ timeR:(a,b)=>((dueDay(b)||'0')+(b.time||'00')).localeCompare((dueDay(a)||'0')+(a.time||'00'))||(a.order-b.order),
+ dl:(a,b)=>(a.deadline||'9').localeCompare(b.deadline||'9')||(a.order-b.order),dlR:(a,b)=>(b.deadline||'0').localeCompare(a.deadline||'0')||(a.order-b.order),
+ az:(a,b)=>(a.title||'').localeCompare(b.title||'','ru'),za:(a,b)=>(b.title||'').localeCompare(a.title||'','ru'),smart:(a,b)=>cmp(a,b)};
+const SORTS=[['','Пользовательская сортировка','sort'],['prio','По приоритету','prio'],['prioR','Обратно приоритету','prio'],['time','По времени','calday'],['timeR','Обратно времени','calday'],['dl','По дедлайну','flag'],['dlR','Обратно дедлайну','flag'],['az','По алфавиту','list'],['za','Обратно алфавиту','list'],['smart','Умная сортировка','focus']];
+
+/* generic popup menu with submenus */
+function popMenu(items,x,y,opts={}){closeCtx();const m=document.createElement('div');m.className='ctxmenu pmenu2';m.setAttribute('role','menu');
+  const html=list=>list.map((it,i)=>it==='-'?'<hr>':it.tabs?`<div class="mtabs">${it.tabs.map(t=>`<button data-mk="${t.k}" class="${t.on?'on':''}">${ic(t.icon)}<span>${esc(t.label)}</span></button>`).join('')}</div>`:it.head?`<div class="mhead">${esc(it.head)}</div>`:`<button role="menuitem" data-mk="${it.k||''}" data-i="${i}" class="${it.dis?'dis':''} ${it.cls||''} ${it.sub?'hassub':''}" ${it.dis?'aria-disabled="true"':''}>${it.check!==undefined?`<i class="mchk">${it.check?ic('check'):''}</i>`:''}${it.icon?ic(it.icon):''}<span>${esc(it.label)}</span>${it.kb?`<kbd>${esc(it.kb)}</kbd>`:''}${it.sub?ic('right'):''}</button>`).join('');
+  m.innerHTML=html(items);document.body.appendChild(m);const place=(el,x,y)=>{const r=el.getBoundingClientRect();el.style.left=Math.max(6,Math.min(x,innerWidth-r.width-6))+'px';el.style.top=Math.max(6,Math.min(y,innerHeight-r.height-6))+'px'};place(m,x,y);
+  let sub=null;const openSub=(btn,list)=>{sub?.remove();sub=document.createElement('div');sub.className='ctxmenu pmenu2 sub';sub.innerHTML=html(list);document.body.appendChild(sub);const r=btn.getBoundingClientRect();let sx=r.right+2;if(sx+sub.offsetWidth>innerWidth-6)sx=r.left-sub.offsetWidth-2;place(sub,sx,r.top-6);
+    sub.addEventListener('click',ev=>{const b=ev.target.closest('[data-mk]');if(!b||b.classList.contains('dis'))return;const it=list[+b.dataset.i];closeCtx();it&&it.run&&it.run()})};
+  m.addEventListener('mouseover',ev=>{const b=ev.target.closest('button[data-i]');if(!b)return;const it=items[+b.dataset.i];if(it&&it.sub)openSub(b,typeof it.sub==='function'?it.sub():it.sub);else if(sub&&!ev.target.closest('.sub')){sub.remove();sub=null}});
+  m.addEventListener('click',ev=>{const b=ev.target.closest('[data-mk]');if(!b||b.classList.contains('dis'))return;if(b.closest('.mtabs')){const tb=items.find(x=>x.tabs).tabs.find(t=>t.k===b.dataset.mk);closeCtx();tb&&tb.run&&tb.run();return}const it=items[+b.dataset.i];if(it&&it.sub){openSub(b,typeof it.sub==='function'?it.sub():it.sub);return}closeCtx();it&&it.run&&it.run()});
+  return m}
+const selTask=()=>selId&&S.tasks.get(selId);
+const goView=(type,id)=>{view={type,id};searchQ='';selId=selNoteId=null;render();const c=$('#content');if(c)c.scrollTop=0};
+
+function appMenu(x,y){const t=selTask();const T=k=>()=>{const tt=selTask();if(tt)doTM(k,tt)};
+  popMenu([
+   {label:'Файл',icon:'file',sub:()=>[{label:'Синхронизировать',icon:'refresh',run:()=>location.reload()},{label:'Настройки',icon:'gear',kb:'Ctrl ,',run:()=>goView('settings')},'-',{label:'Новая задача',icon:'square',kb:'N',run:()=>runAct('qaFocus')},{label:'Новая подзадача',icon:'sub',kb:'Alt ⇧ N',dis:!t,run:T('sub')},{label:'Новая секция',icon:'layers',dis:view.type!=='project',run:()=>runAct('addGroup')},{label:'Новый проект',icon:'folder',run:()=>runAct('addProject')},{label:'Новый подпроект',icon:'folder',dis:view.type!=='project',run:()=>runAct('addSubProject')},{label:'Новая заметка',icon:'note',run:()=>runAct('newNote')},'-',{label:'Скачать копию данных',icon:'history',run:()=>runAct('export')},{label:'Импорт из файла',icon:'paste',run:()=>runAct('import')},{label:'Выйти из аккаунта',icon:'out',run:()=>runAct('signOut')}]},
+   {label:'Правка',icon:'edit',sub:()=>[{label:'Вырезать',icon:'cut',kb:'Ctrl X',dis:!t,run:T('cut')},{label:'Копировать',icon:'copy',kb:'Ctrl C',dis:!t,run:T('copy')},{label:'Вставить',icon:'paste',kb:'Ctrl V',dis:!CLIP,run:()=>pasteClip()},{label:'Удалить',icon:'trash',kb:'Del',dis:!t,run:T('del')},'-',{label:'Быстрый поиск',icon:'search',kb:'Ctrl F',run:()=>$('#q')?.focus()}]},
+   {label:'Перейти в раздел',icon:'move',sub:()=>[['inbox','Входящие','inbox','Alt 1'],['today','Сегодня','star','Alt 2'],['upcoming','Планы','calday','Alt 3'],['calendar','Календарь','calgrid','Alt 8'],['habits','Привычки','target'],['_tags','Теги','tag'],['unplaced','Без проекта','shuffle','Alt 4'],['someday','Когда-нибудь','rainbow','Alt 5'],['done','Архив','history','Alt 6'],['trash','Корзина','trash','Alt 7'],'-',['notes','Заметки','note'],['kanban','Канбан','cols'],['review','Проверка проектов','review'],['time','Время и Помодоро','timer']].map(v=>v==='-'?'-':{label:v[1],icon:v[2],kb:v[3],run:()=>v[0]==='_tags'?runAct('tagMenu'):goView(v[0])})},
+   {label:'Вид',icon:'panel',sub:()=>[{label:'Полноэкранный режим',icon:'full',run:()=>{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.()}},{label:'Фокус',icon:'focus',kb:'F',run:()=>runAct('focus')},{label:'Режим проверки',icon:'review',run:()=>goView('review')},'-',{label:S.meta.settings.threePane===false?'Включить трёхпанельный режим':'Включить двухпанельный режим',icon:'panel',run:()=>xAct('twoPane')},{label:'Свернуть панель задачи',icon:'x',dis:!selId&&!selNoteId,run:()=>{selId=selNoteId=null;render()}},{label:'Свернуть левую панель',icon:'dleft',run:()=>runAct('sideToggle')}]},
+   {label:'Задачи',icon:'check',sub:()=>[{label:'Установить дату и время',icon:'calday',kb:'Ctrl D',dis:!t,run:T('date')},{label:'Приоритет',icon:'prio',dis:!t,run:()=>{const tt=selTask();if(tt)taskMenu(tt,x+40,y+40)}},{label:'Завершить задачу',icon:'done',kb:'Ctrl Enter',dis:!t,run:T('done')},{label:'Изменить проект',icon:'move',kb:'Ctrl ⇧ M',dis:!t,run:T('project')},{label:'Новая подзадача',icon:'sub',kb:'Alt ⇧ N',dis:!t,run:T('sub')},{label:'Вырезать',icon:'cut',dis:!t,run:T('cut')},{label:'Копировать',icon:'copy',dis:!t,run:T('copy')},{label:'Скопировать ссылку',icon:'link',dis:!t,run:T('link')},'-',{label:'Архивировать завершённые',icon:'history',dis:view.type!=='project',run:()=>runAct('archDone')}]},
+   {label:'Справка',icon:'info',sub:()=>[{head:'Мой планировщик'},{label:'Горячие клавиши',icon:'kbd',run:()=>{setTab='Горячие клавиши';goView('settings')}},{label:'О программе',icon:'info',run:()=>{setTab='О программе';goView('settings')}}]}
+  ],x,y)}
+function xAct(k){const el=document.createElement('button');el.dataset.x=k;el.hidden=true;document.body.appendChild(el);el.click();el.remove()}
+
+function projMenu(p,x,y){if(!p)return;const inView=view.type==='project'&&view.id===p.id;const go=f=>()=>{if(!inView){view={type:'project',id:p.id};selId=selNoteId=null}f();render()};
+  const kidsP=S.meta.projects.filter(c=>c.parentId===p.id);
+  popMenu([
+   {tabs:[{k:'list',label:'Список',icon:'list2',on:!p.notebook,run:go(()=>{if(p.notebook){p.notebook=false;saveMeta()}projTab='tasks'})},{k:'kanban',label:'Канбан',icon:'cols',run:()=>{kanbanProj=p.id;view={type:'kanban'};render()}},{k:'notes',label:'Заметки',icon:'note',on:!!p.notebook,run:go(()=>{projTab='notes'})}]},
+   {label:'Развернуть всё',icon:'expand',run:()=>{const w=id=>S.meta.projects.filter(c=>c.parentId===id).forEach(c=>{c.collapsed=false;w(c.id)});p.collapsed=false;w(p.id);saveMeta()}},
+   {label:'Свернуть всё',icon:'collapse',dis:!kidsP.length,run:()=>{p.collapsed=true;saveMeta()}},'-',
+   {label:'Фокус',icon:'focus',kb:'F',run:go(()=>runAct('focus'))},
+   {label:'Проверка',icon:'review',sub:()=>[[0,'Не проверять'],[7,'Раз в неделю'],[14,'Раз в 2 недели'],[30,'Раз в месяц'],[182,'Раз в полгода']].map(([d,l])=>({label:l,check:(+p.review||0)===d,run:()=>{p.review=d||'';if(d&&!p.reviewedAt)p.reviewedAt=Date.now();saveMeta();toast(d?`Проверка: ${l.toLowerCase()}`:'Проверка выключена')}}))},
+   {label:p.notebook?'Конвертировать в проект':'Конвертировать в блокнот',icon:'notebook',run:go(()=>runAct('projNotebook'))},
+   {label:p.fav?'Убрать из избранного':'Добавить в избранное',icon:'heart',kb:'Ctrl ⇧ L',run:()=>{p.fav=!p.fav;saveMeta()}},
+   {label:'Экспорт в CSV',icon:'csv',run:()=>exportCSV(allTasks().filter(x=>x.projectId===p.id),p.title)},'-',
+   {label:'Создать',icon:'plus',sub:()=>[{label:'Задачу',icon:'square',run:go(()=>setTimeout(()=>runAct('qaFocus'),30))},{label:'Секцию',icon:'layers',run:go(()=>setTimeout(()=>runAct('addGroup'),30))},{label:'Подпроект',icon:'folder',run:go(()=>setTimeout(()=>runAct('addSubProject'),30))},{label:'Заметку',icon:'note',run:go(()=>{projTab='notes';setTimeout(()=>runAct('newNote'),30)})}]},
+   {label:'Вставить',icon:'paste',kb:'Ctrl V',dis:!CLIP,run:go(()=>pasteClip())},
+   {label:'Изменить название и цвет',icon:'edit',run:go(()=>setTimeout(()=>runAct('editProject'),30))},
+   {label:showDone?'Скрыть выполненные':'Показать выполненные',icon:'done',run:go(()=>{showDone=!showDone})},
+   {label:'Архивировать выполненные',icon:'history',run:go(()=>setTimeout(()=>runAct('archDone'),30))},'-',
+   {label:'Удалить',icon:'trash',cls:'danger',run:()=>delProject(p)},
+   {label:'Архивировать',icon:'history',kb:'Ctrl Alt L',run:go(()=>setTimeout(()=>runAct('projArchive'),30))}
+  ],x,y)}
+async function delProject(p){const ids=new Set([p.id]);let ch=true;while(ch){ch=false;for(const c of S.meta.projects)if(c.parentId&&ids.has(c.parentId)&&!ids.has(c.id)){ids.add(c.id);ch=true}}
+  const ts=allTasks().filter(t=>ids.has(t.projectId));if(!await confirmBox('Удалить проект?',`«${p.title}»${ids.size>1?` и подпроекты (${ids.size-1})`:''} будут удалены. Задачи (${ts.length}) попадут в корзину, оттуда их можно вернуть.`,'Удалить'))return;
+  const before=clone(S.meta.projects);const now=Date.now();ts.forEach(t=>{t.deletedAt=now;saveTask(t,{quiet:true})});S.meta.projects=S.meta.projects.filter(x=>!ids.has(x.id));if(view.type==='project'&&ids.has(view.id))view={type:'inbox'};saveMeta();
+  toast('Проект удалён',()=>{S.meta.projects=before;ts.forEach(t=>{t.deletedAt=null;saveTask(t,{quiet:true})});saveMeta()})}
+
+/* pomodoro / stopwatch window like Singularity "Таймеры" */
+let tmTab='pomo',tmMin=null;
+function timersWin(){const pc=S.meta.settings.pomo;if(tmMin==null)tmMin=pc.work;const r=S.meta.running;const t=selTask();
+  const left=r?(r.limit?Math.max(0,r.limit-(Date.now()-r.start)/1000):(Date.now()-r.start)/1000):(tmTab==='pomo'?tmMin*60:0);
+  const m=modal(`<div class="timers"><div class="tmh"><b>Таймеры</b><button class="ic" data-tm="close" aria-label="Закрыть">${ic('x')}</button></div>
+   <div class="tmtabs"><button class="${tmTab==='pomo'?'on':''}" data-tm="tab" data-v="pomo">Помодоро</button><button class="${tmTab==='sw'?'on':''}" data-tm="tab" data-v="sw">Секундомер</button></div>
+   ${tmTab==='pomo'?`<div class="tmpre">${[5,10,15,20,25,30,45,60].map((v,i)=>`<button data-tm="min" data-v="${v}" class="${tmMin===v?'on':''}"><i style="--s:${8+i*1.6}px"></i><small>${v}</small></button>`).join('')}</div>`:''}
+   <div class="tmdial ${tmTab}"><b id="tmclock">${clock(left)}</b><span>${r?esc(S.tasks.get(r.taskId)?.title||(r.pomo?'Помодоро':'Секундомер')):t?esc(t.title):''}</span></div>
+   <p class="small">${tmTab==='pomo'?`Работа ${pc.work} мин · перерыв ${pc.short} мин`:'Считает время, пока не остановишь'}</p>
+   <div class="tmbtns"><button class="ic" data-tm="set" title="Настройки Помодоро" aria-label="Настройки Помодоро">${ic('gear')}</button><button class="tmplay" data-tm="${r?'stop':'play'}" aria-label="${r?'Остановить':'Старт'}">${ic(r?'stop':'play')}</button><button class="ic" data-tm="time" title="Статистика времени" aria-label="Статистика времени">${ic('history')}</button></div></div>`);
+  m.querySelector('.mbox').classList.add('tmbox');
+  m.onclick=e=>{const b=e.target.closest('[data-tm]');if(e.target===m){closeModal();return}if(!b)return;const k=b.dataset.tm;
+   if(k==='close'){closeModal();return}if(k==='tab'){tmTab=b.dataset.v;timersWin();return}if(k==='min'){tmMin=+b.dataset.v;timersWin();return}
+   if(k==='play'){startTimer(selId||null,tmTab==='pomo'?tmMin*60:null,tmTab==='pomo');timersWin();return}if(k==='stop'){stopTimer();timersWin();return}
+   if(k==='set'){closeModal();setTab='Помодоро';goView('settings');return}if(k==='time'){closeModal();goView('time')}};
+  clearInterval(timersWin._i);timersWin._i=setInterval(()=>{const c=document.getElementById('tmclock');if(!c){clearInterval(timersWin._i);return}const r=S.meta.running;if(r)c.textContent=clock(r.limit?Math.max(0,r.limit-(Date.now()-r.start)/1000):(Date.now()-r.start)/1000)},1000)}
+
+/* notifications panel */
+function notifList(){const now=Date.now(),from=now-14*864e5;const out=[];for(const t of allTasks()){if(!open(t))continue;const at=typeof remindAt==='function'?remindAt(t):null;if(at&&at<=now&&at>=from)out.push({t,at})}return out.sort((a,b)=>b.at-a.at).slice(0,40)}
+function notifPanel(x,y){closeCtx();const read=S.meta.settings.notifRead||0;const L=notifList();const m=document.createElement('div');m.className='ctxmenu notifp';
+  m.innerHTML=`<div class="nph"><button data-n="read">${ic('check')}Отметить как прочитанные</button></div>${L.length?L.map(({t,at})=>`<button class="nitem" data-n="open" data-id="${t.id}"><b>${esc(t.title||'Без названия')}</b><span>${t.start?fmtDate(t.start):''}${t.time?', '+esc(t.time):''}</span><small><i class="${at>read?'unread':''}"></i>${fmtDate(iso(new Date(at)))}, в ${new Date(at).toTimeString().slice(0,5)}</small></button>`).join(''):'<p class="small" style="padding:14px">Пока нет уведомлений</p>'}`;
+  document.body.appendChild(m);m.style.left=Math.max(6,Math.min(x-300,innerWidth-m.offsetWidth-6))+'px';m.style.top=y+'px';
+  m.onclick=e=>{const b=e.target.closest('[data-n]');if(!b)return;if(b.dataset.n==='read'){S.meta.settings.notifRead=Date.now();saveMeta({quiet:true});closeCtx();updBell();return}closeCtx();selId=b.dataset.id;render();renderDetail(true)}}
+function updBell(){const b=document.querySelector('.tbar .notifb');if(!b||!S.meta)return;const read=S.meta.settings.notifRead||0;b.classList.toggle('dot',notifList().some(n=>n.at>read))}
+setInterval(updBell,30000);
+
+/* date jump popover */
+function dateJump(x,y){closeCtx();const m=document.createElement('div');m.className='ctxmenu djump';const ws=S.meta.settings.weekStart;const t0=today();
+  const month=ym=>{const [Y,M]=ym.split('-').map(Number);const first=new Date(Y,M-1,1);const off=(first.getDay()-ws+7)%7;const n=new Date(Y,M,0).getDate();const has=new Set(allTasks().filter(open).map(dueDay).filter(Boolean));
+    return`<div class="djm"><b>${first.toLocaleDateString('ru-RU',{month:'long',year:'numeric'})}</b><div class="djg">${(ws?['Пн','Вт','Ср','Чт','Пт','Сб','Вс']:['Вс','Пн','Вт','Ср','Чт','Пт','Сб']).map(d=>`<span>${d}</span>`).join('')}${'<span></span>'.repeat(off)}${[...Array(n)].map((_,i)=>{const d=`${Y}-${String(M).padStart(2,'0')}-${String(i+1).padStart(2,'0')}`;return`<button data-d="${d}" class="${d===t0?'td':''} ${has.has(d)?'has':''}">${i+1}</button>`}).join('')}</div></div>`};
+  const m0=t0.slice(0,7),m1=iso(new Date(+t0.slice(0,4),+t0.slice(5,7),1)).slice(0,7);
+  m.innerHTML=`<input class="inp" type="date" id="djIn" aria-label="Дата">${month(m0)}${month(m1)}`;document.body.appendChild(m);m.style.left=Math.max(6,Math.min(x-150,innerWidth-m.offsetWidth-6))+'px';m.style.top=y+'px';
+  const go=d=>{closeCtx();calMode='day';calDay=d;calMonth=d.slice(0,7);goView('calendar')};
+  m.onclick=e=>{const b=e.target.closest('[data-d]');if(b)go(b.dataset.d)};m.querySelector('#djIn').onchange=e=>{if(e.target.value)go(e.target.value)}}
+
+/* dictation from toolbar */
+function dictate(btn){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){toast('Браузер не поддерживает диктовку');return}const rec=new SR();rec.lang='ru-RU';btn.classList.add('on');
+  rec.onresult=ev=>{const txt=[...ev.results].map(r=>r[0].transcript).join(' ').trim();if(!txt)return;const i=$('#qaInput');i.value=txt;$('#qa').requestSubmit?$('#qa').requestSubmit():$('#qaBtn').click()};rec.onerror=ev=>{if(ev.error==='not-allowed')toast('Разреши доступ к микрофону')};rec.onend=()=>btn.classList.remove('on');rec.start();toast('Говори задачу…')}
+
+/* settings window with sections on the left */
+let setTab='Аккаунт и синхронизация',setQ='',lastView={type:'today'};
+const SET_NAV=[['Общие',[['Аккаунт и синхронизация','cloud',['Аккаунт','Данные']],['Общие настройки','gear',['Общие','Задачи']],['Темы и оформление','palette',['Оформление']],['Интерфейс','panel',['Интерфейс','Левая панель']]]],
+ ['Функции',[['Помодоро','timer',['Помодоро']],['Быстрое добавление задач','plus',['Быстрое добавление']],['Теги','tag',['Теги']],['Канбан','cols',['Колонки канбана']],['Проекты в архиве','history',['Проекты в архиве']],['Горячие клавиши','kbd',['Горячие клавиши']]]],
+ ['Справка',[['О программе','info',[]]]]];
+function settingsWin(){const c=$('#content');const cards={};c.querySelectorAll('.card-s').forEach(k=>{const h=k.querySelector('h2');if(h)cards[h.textContent.trim()]=k});
+  const all=SET_NAV.flatMap(g=>g[1]);if(!all.some(x=>x[0]===setTab))setTab=all[0][0];const u=S.user;
+  const match=it=>!setQ||it[0].toLowerCase().includes(setQ)||it[2].some(t=>(cards[t]?.textContent||'').toLowerCase().includes(setQ));
+  const wrap=document.createElement('div');wrap.className='setov';
+  wrap.innerHTML=`<div class="setdlg" role="dialog" aria-label="Настройки"><aside class="setnav"><div class="setacct">${u?.photoURL?`<img src="${esc(u.photoURL)}" alt="" referrerpolicy="no-referrer">`:`<i>${esc((u?.email||'?')[0].toUpperCase())}</i>`}<div><b>${esc(u?.email||'')}</b><small>${esc(u?.displayName||'')}</small></div></div><label class="search">${ic('search')}<input id="setQ" placeholder="Поиск" value="${esc(setQ)}" aria-label="Поиск по настройкам"></label>
+   ${SET_NAV.map(([g,items])=>{const vis=items.filter(match);return vis.length?`<div class="setg">${g}</div>${vis.map(it=>`<button class="${it[0]===setTab?'on':''}" data-st="${esc(it[0])}">${ic(it[1])}<span>${it[0]}</span></button>`).join('')}`:''}).join('')}</aside>
+   <section class="setpane"><div class="seth">${ic((all.find(x=>x[0]===setTab)||[])[1]||'gear')}<b>${setTab}</b><span class="grow"></span><button class="ic" data-st="_close" aria-label="Закрыть настройки">${ic('x')}</button></div><div class="setbody"></div></section></div>`;
+  const body=wrap.querySelector('.setbody');const cur=all.find(x=>x[0]===setTab);
+  if(setTab==='О программе')body.innerHTML=`<div class="card-s"><h2>Мой планировщик</h2><p>Задачи, проекты, календарь, привычки и заметки. Данные хранятся в твоём аккаунте и синхронизируются между телефоном и компьютером.</p><p class="small">Версия ${esc((document.querySelector('script[type=module]')?.src.match(/v=([\w]+)/)||[])[1]||'')}</p></div>`;
+  else cur[2].forEach(t=>{if(cards[t])body.appendChild(cards[t])});
+  c.innerHTML='';c.appendChild(wrap);
+  wrap.addEventListener('click',e=>{const b=e.target.closest('[data-st]');if(e.target===wrap){closeSet();return}if(!b)return;if(b.dataset.st==='_close'){closeSet();return}setTab=b.dataset.st;render()});
+  const q=wrap.querySelector('#setQ');q.addEventListener('input',()=>{setQ=q.value.trim().toLowerCase();const pos=q.selectionStart;render();const q2=document.getElementById('setQ');if(q2){q2.focus();q2.setSelectionRange(pos,pos)}})}
+function closeSet(){view=lastView&&lastView.type!=='settings'?lastView:{type:'today'};render()}
+
+/* bottom floating bar like Singularity */
+function fbar(){let b=document.getElementById('fbar');const listV=['inbox','today','upcoming','project','someday','unplaced','tag'].includes(view.type)&&!(view.type==='project'&&projTab==='notes');
+  if(!listV||innerWidth<=820||multi.size>1){b?.remove();return}
+  if(!b){b=document.createElement('div');b.id='fbar';$('#main').appendChild(b)}const t=selTask();
+  b.innerHTML=`<button class="fnew" data-act="qaFocus">${ic('plus')}Новая задача</button>${view.type==='project'?`<button class="ic" data-act="addGroup" title="Новая секция" aria-label="Новая секция">${ic('layers')}</button>`:''}${t?`<button class="ic" data-fb="date" title="Дата и время" aria-label="Дата и время">${ic('calday')}</button><button class="ic" data-fb="project" title="Изменить проект" aria-label="Изменить проект">${ic('move')}</button><button class="ic" data-fb="del" title="Удалить" aria-label="Удалить">${ic('trash')}</button><span class="fhint">⇧ ENTER к заметке и параметрам</span>`:''}`;
+  b.onclick=e=>{const x=e.target.closest('[data-fb]');if(!x)return;const tt=selTask();if(tt)doTM(x.dataset.fb,tt)}}
+
+/* header extras: project "…" next to title, sort button */
+function headExtras(){const vt=$('#vtitle');if(!vt)return;const pm=document.querySelector('#content .pmorebtn2');if(pm){vt.appendChild(pm)}
+  let sb=document.getElementById('sortBtn');const can=['inbox','today','upcoming','project','someday','unplaced','tag','done'].includes(view.type);
+  if(!can){sb?.remove();return}if(!sb){sb=document.createElement('button');sb.id='sortBtn';sb.className='ic sortb';sb.dataset.x='sort';sb.title='Сортировка';sb.setAttribute('aria-label','Сортировка');sb.innerHTML=ic('sort');const tb=document.querySelector('.top .tbar');tb?tb.before(sb):$('.top').appendChild(sb)}
+  sb.classList.toggle('on',!!(S.meta.settings.sorts||{})[view.type+(view.id||'')])}
+
+/* wrap render */
+{const _r=render;render=function(){if(view.type!=='settings')lastView={...view};_pstat=null;_r();if(!S.meta)return;document.body.classList.toggle('v-settings',view.type==='settings');if(view.type==='settings')settingsWin();headExtras();fbar();updBell()}}
+
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-x]');if(!b||!S.meta)return;const k=b.dataset.x;const r=b.getBoundingClientRect();e.preventDefault();e.stopPropagation();
+  if(k==='appMenu')appMenu(r.left,r.bottom+4);
+  else if(k==='projMenu')projMenu(proj(b.dataset.id||view.id),r.left,r.bottom+4);
+  else if(k==='projHide'){S.meta.settings.projHidden=!S.meta.settings.projHidden;saveMeta()}
+  else if(k==='dictate')dictate(b);
+  else if(k==='twoPane'){S.meta.settings.threePane=S.meta.settings.threePane===false;saveMeta();toast(S.meta.settings.threePane===false?'Двухпанельный режим: карточка открывается под задачей':'Трёхпанельный режим: карточка справа')}
+  else if(k==='dateJump')dateJump(r.right,r.bottom+6);
+  else if(k==='timers')timersWin();
+  else if(k==='notif')notifPanel(r.right,r.bottom+6);
+  else if(k==='sort'){const key=view.type+(view.id||'');const cur=(S.meta.settings.sorts||{})[key]||'';popMenu(SORTS.map(([v,l,i])=>({label:l,icon:i,check:cur===v,run:()=>{S.meta.settings.sorts={...(S.meta.settings.sorts||{}),[key]:v};if(!v)delete S.meta.settings.sorts[key];saveMeta()}})),r.right-260,r.bottom+4)}
+},true);
+/* right click on a project in the sidebar → project menu */
+document.addEventListener('contextmenu',e=>{const p=e.target.closest&&e.target.closest('#side [data-nav="project"][data-id]');if(!p||!S.meta)return;e.preventDefault();e.stopPropagation();projMenu(proj(p.dataset.id),e.clientX,e.clientY)},true);
+/* Esc closes settings window */
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&view.type==='settings'&&!document.querySelector('.ctxmenu')&&$('#modal').hidden){closeSet()}
+  if((e.ctrlKey||e.metaKey)&&e.key===','){e.preventDefault();goView('settings')}
+  if(e.altKey&&!e.ctrlKey&&!e.metaKey&&/^Digit[1-8]$/.test(e.code)&&!(e.target.matches&&e.target.matches('input,textarea'))){const v={1:'inbox',2:'today',3:'upcoming',4:'unplaced',5:'someday',6:'done',7:'trash',8:'calendar'}[e.code.slice(5)];if(v){e.preventDefault();goView(v)}}});
