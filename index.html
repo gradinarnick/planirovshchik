@@ -804,6 +804,52 @@ input[type=time].sgnum{width:96px}
 .sgwc{position:relative;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;overscroll-behavior:contain}.sgwc::-webkit-scrollbar{display:none}
 .sgwc b,.sgwc i{display:block;height:44px;line-height:44px;text-align:center;scroll-snap-align:start;font-weight:400;font-size:20px;font-style:normal;color:var(--fg);transform-origin:center;cursor:pointer;white-space:nowrap}
 .sgwc b.on{font-size:23px}.sgwc b.dis{color:var(--muted)}
+/* ===== Singularity desktop look ===== */
+.icl{display:none}
+@media (min-width:821px){
+ #side .icrow{flex-direction:column;gap:0;border-top:0;padding-top:4px}
+ #side .icrow button{justify-content:flex-start;gap:10px;height:30px;padding:0 10px;font-size:13.5px;color:var(--fg);flex:none}
+ #side .icrow button svg{width:16px;height:16px;color:var(--muted)}#side .icrow .icl{display:inline}
+ body.sgd #qa{display:none!important}
+ body.sgd .sgwrap{max-width:none;padding:6px 18px 90px!important}
+ body.sgd .sglist{margin:0;padding:0}
+ body.sgd .sgrow{display:flex;align-items:flex-start;gap:12px;padding:7px 8px!important;margin:0!important;border:0!important;border-radius:6px!important;background:transparent!important;box-shadow:none!important;position:relative}
+ body.sgd .sgrow:hover{background:color-mix(in srgb,var(--fg) 4%,transparent)!important}body.sgd .sgrow.is-sel{background:color-mix(in srgb,var(--accent) 14%,transparent)!important}
+ body.sgd .sgrow .sgchk{width:15px;height:15px;border-radius:3px!important;border:1.5px solid color-mix(in srgb,var(--fg) 50%,transparent)!important;background:transparent!important;margin-top:2px;flex:none;color:var(--fg)}
+ body.sgd .sgrow.is-done .sgchk{background:var(--accent)!important;border-color:var(--accent)!important;color:#fff}
+ body.sgd .sgrow .tbody{flex:1;min-width:0}
+ body.sgd .sgrow .ttl{font-size:13.5px;line-height:1.35;font-weight:400}body.sgd .sgrow.is-done .ttl{text-decoration:line-through;color:var(--muted)}
+ body.sgd .sgmk{display:none}
+ body.sgd .sgmeta{font-size:11px;color:var(--muted);margin-top:2px;display:flex;align-items:center;flex-wrap:wrap;gap:4px}body.sgd .sgmeta b{font-weight:400;opacity:.6}
+ .sgpd{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--c,var(--muted));margin-right:3px;vertical-align:1px}
+ body.sgd .sgmeta .sgi svg{width:11px;height:11px}
+ body.sgd .sgri{display:flex;gap:6px;color:var(--muted);margin-left:auto;padding-top:2px}body.sgd .sgri svg{width:14px;height:14px}
+ .sgsech{display:flex;align-items:center;gap:8px;width:100%;padding:14px 8px 8px;font:inherit;color:var(--fg);text-align:left}.sgsech b{font-size:14.5px;font-weight:600}.sgsech span{font-size:12px;color:var(--muted)}.sgsech svg{width:15px;height:15px;color:var(--muted)}.sgsech svg:last-child{margin-left:auto}
+ body.sgd .sgplanhead{display:flex;align-items:center;justify-content:space-between;padding:4px 8px}
+ body.sgd .sgweek{display:flex;gap:4px;padding:4px 8px 8px;border-bottom:1px solid var(--line)}
+ body.sgd .sgweek button{flex:1;display:flex;flex-direction:row;justify-content:center;gap:6px;align-items:center;padding:5px 0;border-radius:6px;color:var(--muted);position:relative}
+ body.sgd .sgweek button.on{background:color-mix(in srgb,var(--fg) 8%,transparent);color:var(--fg)}body.sgd .sgweek small{font-size:12px}body.sgd .sgweek b{font-size:12px;font-weight:400}
+ body.sgd .sgweek i{position:static;width:4px;height:4px;border-radius:50%;background:currentColor}
+ body.sgd .sgdh{display:flex;align-items:center;gap:6px;width:100%;padding:7px 10px;margin-top:10px;border-radius:6px;background:color-mix(in srgb,var(--fg) 5%,var(--bg));font:inherit;color:var(--fg)}
+ body.sgd .sgdh b{font-size:13px}body.sgd .sgdh span{flex:1;text-align:left;font-size:13px}body.sgd .sgdh em{font-style:normal;font-weight:600}body.sgd .sgdh i{font-style:normal;font-size:12px;color:var(--muted)}body.sgd .sgdh svg{width:14px;height:14px;color:var(--muted)}
+ body.sgd .sgmon{font:inherit;font-size:13px;color:var(--fg);display:flex;align-items:center;gap:4px}.sgmon svg{width:13px;height:13px}
+ .sgnone{margin:auto;padding:30px;text-align:center;display:flex;flex-direction:column;gap:8px;color:var(--muted)}.sgnone b{font-weight:500;font-size:14px;color:color-mix(in srgb,var(--fg) 70%,transparent)}.sgnone span{font-size:11.5px;max-width:240px}
+ #detail:has(.sgnone){justify-content:center}
+}
+.sgpop{max-height:70vh;overflow:auto}
+/* new task dialog */
+#modal.sgntm{align-items:flex-start;padding-top:12vh}
+#modal.sgntm .mbox{width:min(640px,94vw)!important;max-width:none!important;padding:0!important;border-radius:12px!important;overflow:visible}
+.sgnth{display:flex;align-items:center;justify-content:space-between;padding:8px 10px 0 16px;font-size:12px;color:var(--muted)}.sgnth .ic{width:28px;height:28px;display:grid;place-items:center;color:var(--muted)}.sgnth svg{width:15px;height:15px}
+.sgntb{padding:8px 16px 4px}.sgntt{display:flex;align-items:center;gap:10px}.sgbox0{width:16px;height:16px;border:1.5px solid color-mix(in srgb,var(--fg) 50%,transparent);border-radius:3px;flex:none}
+#sgntTitle{flex:1;background:transparent;border:0;outline:0;font:inherit;font-size:17px;color:var(--fg);padding:6px 0}
+.sgntb textarea{display:block;width:100%;background:transparent;border:0;outline:0;resize:vertical;font:inherit;font-size:13px;color:var(--fg);padding:6px 0 6px 26px;min-height:28px}.sgntb textarea[hidden]{display:none}
+.sgntf{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 12px 12px;border-top:1px solid var(--line)}
+.sgchips{display:flex;flex-wrap:wrap;gap:4px;flex:1}.sgchip{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:6px;font:inherit;font-size:12px;color:var(--muted)}.sgchip:hover{background:color-mix(in srgb,var(--fg) 6%,transparent);color:var(--fg)}.sgchip.on{color:var(--accent)}.sgchip svg{width:13px;height:13px}
+.sgntbtn{display:flex;gap:6px;margin-left:auto}.sgntbtn .btn{padding:6px 14px;font-size:13px}
+.sgmcal{width:276px;padding:8px}.sgmcal .sgdm{display:flex;align-items:center;justify-content:space-between;padding:2px 2px 6px}.sgmcal .sgdm .ic{width:28px;height:28px;display:grid;place-items:center}.sgmcal .sgdm svg{width:15px;height:15px}
+.sgmcal .sgdg{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}.sgmcal .sgdg span{font-size:10.5px;color:var(--muted);text-align:center;padding:3px 0}.sgmcal .sgdg button{height:32px;border-radius:6px;font-size:13px;color:var(--fg);padding:0}.sgmcal .sgdg button:hover{background:color-mix(in srgb,var(--fg) 8%,transparent)}.sgmcal .sgdg .tdy{color:var(--accent);font-weight:600}.sgmcal .sgdg .on{background:var(--accent);color:#fff}
+.sgclr{width:100%;padding:8px;margin-top:4px;font:inherit;font-size:12.5px;color:var(--muted);border-radius:6px}.sgclr:hover{background:color-mix(in srgb,var(--fg) 6%,transparent)}
 </style>
 </head>
 <body>
@@ -845,7 +891,7 @@ input[type=time].sgnum{width:96px}
 <div id="toast" hidden></div>
 <div id="modal" hidden></div>
 
-<script type="module" src="app.js?v=20261113w"></script>
+<script type="module" src="app.js?v=20261116a"></script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
 </body>
 </html>
