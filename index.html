@@ -889,6 +889,32 @@ input[type=time].sgnum{width:96px}
  .sgchk0{width:15px;height:15px;border:1.5px solid color-mix(in srgb,var(--fg) 40%,transparent);border-radius:3px;flex:none;margin-top:2px}.sgchk0.nt{border:0;color:var(--muted)}.sgchk0.nt svg{width:15px;height:15px}
  .sgtd{font-size:11px;color:var(--muted);padding-top:2px;white-space:nowrap}.sgtr{display:flex;gap:2px;opacity:0}.sgtrrow:hover .sgtr{opacity:1}.sgtr .ic{width:24px;height:24px;display:grid;place-items:center;color:var(--muted)}.sgtr svg{width:13px;height:13px}
 }
+/* desktop task card, sidebar colours, weights */
+@media (min-width:821px){
+ #detail.sgdet2 .dhead{display:none!important}
+ #detail.sgdet2 .dbody{display:flex;flex-direction:column;min-height:100%;padding:0 0 10px!important}
+ #detail.sgdet2 .sghide:not(.sgshow){display:none!important}#detail.sgdet2.sgall .sghide{display:block!important}#detail.sgdet2.sgall .sghide.grid2{display:grid!important}
+ #detail.sgdet2 .sghide.sgshow,#detail.sgdet2.sgall .sghide{margin:6px 22px 4px}
+ .sgdh{display:flex;align-items:center;gap:4px;padding:10px 12px 10px 22px;border-bottom:1px solid var(--line);font-size:12.5px;color:var(--muted)}.sgdh span{flex:1}.sgdh .ic{width:28px;height:28px;display:grid;place-items:center;color:var(--muted)}.sgdh .ic svg{width:16px;height:16px}
+ .sgdt{display:flex;gap:12px;align-items:flex-start;padding:16px 22px 4px}.sgdt .sgchk{width:18px;height:18px;border-radius:3px!important;border:1.5px solid color-mix(in srgb,var(--fg) 55%,transparent)!important;background:transparent!important;margin-top:4px;flex:none;color:var(--fg)}
+ .sgdtslot{flex:1;min-width:0}.sgdtslot .dtitle{font-size:19px!important;font-weight:600!important;padding:0!important;margin:0!important;border:0!important;background:transparent!important;width:100%;line-height:1.3;box-shadow:none!important}
+ .sgdnslot{padding:2px 22px 8px 52px}.sgdnslot textarea{width:100%;min-height:60px;background:transparent!important;border:0!important;outline:0;box-shadow:none!important;padding:0!important;font:inherit;font-size:13.5px;color:var(--fg);resize:none}
+ .sgdbar{margin-top:auto;display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:10px 16px 4px}.sgdbar .sgchips{gap:4px}.sgdbar .sgchip{background:color-mix(in srgb,var(--fg) 5%,transparent);padding:6px 9px;font-size:12.5px}.sgdbar .sgchip.on{color:var(--fg)}.sgdbar .sgchip.on svg{color:var(--accent)}
+ .sgdfoot{display:flex;align-items:center;gap:8px;padding:8px 18px 4px;font-size:11.5px;color:var(--muted)}.sgdfoot i{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:10px;background:color-mix(in srgb,var(--fg) 10%,transparent)}
+ body.sgwide:not(.inline-det).has-detail #app{grid-template-columns:var(--sw,250px) minmax(0,.9fr) minmax(0,1.4fr)}
+ li.inline-host #detail.sgdet2{border-radius:10px;background:color-mix(in srgb,var(--fg) 3%,var(--bg))!important}
+ li.inline-host #detail.sgdet2 .sgdt{padding:12px 16px 2px}li.inline-host #detail.sgdet2 .sgdnslot{padding:0 16px 6px 46px}li.inline-host #detail.sgdet2 .sgdbar{padding:8px 10px 10px}
+ /* sidebar: blue icons on top sections, colour stripe at projects */
+ #side nav:not(.icrow) [data-nav]:not([data-nav=project]) svg{color:#3b8cff}
+ #side [data-nav=project]{position:relative}#side [data-nav=project]::before{content:'';position:absolute;left:-10px;top:3px;bottom:3px;width:3px;border-radius:0 2px 2px 0;background:var(--pcol,transparent)}
+ /* weights closer to the original */
+ body.sgd #side button,body.sgd #side a{font-weight:500}
+ body.sgd .sgrow .ttl{font-weight:500;font-size:14px}
+ body.sgd .sgmeta{font-weight:500}
+ body.sgd #vtitle{font-weight:700}
+ body.sgd .sgsech{padding:18px 6px 8px}body.sgd .sgsech b{font-size:19px;font-weight:700}body.sgd .sgsech>svg:first-child{width:19px;height:19px;color:#3b8cff}
+ body.sgd .sgmk{display:inline;color:#3b8cff;margin-right:6px}
+}
 </style>
 </head>
 <body>
@@ -930,7 +956,7 @@ input[type=time].sgnum{width:96px}
 <div id="toast" hidden></div>
 <div id="modal" hidden></div>
 
-<script type="module" src="app.js?v=20261116b"></script>
+<script type="module" src="app.js?v=20261116c"></script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
 </body>
 </html>
