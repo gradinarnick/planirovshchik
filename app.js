@@ -1578,3 +1578,6 @@ document.addEventListener('change',e=>{if(e.target.id!=='sgZoom')return;const v=
 SET_NAV[0][1][2]=['Темы и оформление','palette',['Оформление'],'themeD'];
 {const _ss=sgSet;sgSet=function(k,v){if(k==='themeSys'){const st=S.meta.settings;if(v){SG().themePrev=getTheme();setTheme('system')}else setTheme(SG().themePrev&&SG().themePrev!=='system'?SG().themePrev:'night');SG().themeSys=v;saveMeta({quiet:true});render();return}_ss(k,v);if(k==='brightCal'||k==='focusArea')document.body.classList.toggle('sg-'+k,!!v)}}
 {const _r17=render;render=function(){_r17();if(!S.meta)return;document.body.classList.toggle('sg-brightCal',!!SG().brightCal);document.body.classList.toggle('sg-focusArea',!!SG().focusArea)}}
+/* two-pane (inline) mode is a desktop thing: on the phone the card is always the bottom sheet */
+{const _pi=placeInline;placeInline=function(){if(isM()){const d=$('#detail');if(d&&d.parentElement!==$('#app'))$('#app').appendChild(d);document.querySelectorAll('li.inline-host').forEach(x=>x.remove());return}_pi()}}
+{const _r18=render;render=function(){if(isM())document.body.classList.remove('inline-det');_r18();if(isM()){document.body.classList.remove('inline-det');placeInline()}}}
