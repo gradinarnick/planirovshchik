@@ -850,6 +850,45 @@ input[type=time].sgnum{width:96px}
 .sgmcal{width:276px;padding:8px}.sgmcal .sgdm{display:flex;align-items:center;justify-content:space-between;padding:2px 2px 6px}.sgmcal .sgdm .ic{width:28px;height:28px;display:grid;place-items:center}.sgmcal .sgdm svg{width:15px;height:15px}
 .sgmcal .sgdg{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}.sgmcal .sgdg span{font-size:10.5px;color:var(--muted);text-align:center;padding:3px 0}.sgmcal .sgdg button{height:32px;border-radius:6px;font-size:13px;color:var(--fg);padding:0}.sgmcal .sgdg button:hover{background:color-mix(in srgb,var(--fg) 8%,transparent)}.sgmcal .sgdg .tdy{color:var(--accent);font-weight:600}.sgmcal .sgdg .on{background:var(--accent);color:#fff}
 .sgclr{width:100%;padding:8px;margin-top:4px;font:inherit;font-size:12.5px;color:var(--muted);border-radius:6px}.sgclr:hover{background:color-mix(in srgb,var(--fg) 6%,transparent)}
+@media (min-width:821px){
+ .setbody.sgset{padding:6px 18px 24px;display:block}.setbody.sgset>*{flex-shrink:0}
+ .setdlg{height:min(760px,88vh)!important}
+ .setbody.sgset .sgsbox{background:transparent;border-radius:0}
+ .setbody.sgset .sgrow2{padding:11px 4px;border-bottom:1px solid color-mix(in srgb,var(--fg) 6%,transparent);min-height:0}
+ .setbody.sgset .sgrow2 .sgl>span{font-size:13px;font-weight:500}.setbody.sgset .sgrow2 .sgl small{font-size:11px}
+ .setbody.sgset .sgsec{padding:18px 4px 4px;font-size:11.5px}
+ .setbody.sgset .sgsel.r{max-width:40%;min-width:150px}
+ .setbody.sgset .sgcardslot .card-s{background:transparent!important;padding:6px 0!important}
+ .sgdback{display:flex;align-items:center;gap:4px;margin:6px 0}.sgdback svg{width:14px;height:14px}
+ .sgmob{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:4px 0}.sgmob div{display:flex;flex-direction:column;gap:20px;padding:12px;border-radius:8px;background:color-mix(in srgb,var(--fg) 5%,var(--bg));font-size:12.5px}.sgmob svg{width:18px;height:18px;color:var(--accent);order:2}
+ .sgabout{display:flex;flex-direction:column;align-items:center;gap:6px;padding:20px 0 16px}.sgabout .lg{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(#5b8cff,#a35bff,#ff5bd0,#5b8cff);margin-bottom:6px}.sgabout .lg svg{width:30px;height:30px;color:#fff;background:#141a33;border-radius:50%;padding:12px;box-sizing:content-box}.sgabout b{font-size:16px}.sgabout small{color:var(--muted);font-size:11.5px}
+}
+@media (min-width:821px){
+ body.sgd .sgcalctl~*,body.sgd .top:has(.sgcalctl) .calnav{}
+ body.sgd .top:has(.sgcalctl) .calnav{display:none}
+ body.sgcal #content .wrap > .toolbar{display:none}
+ .sgcalctl{display:flex;align-items:center;gap:6px;margin-right:8px}
+ .sgcv{display:flex;align-items:center;gap:6px;padding:5px 10px;border-radius:6px;background:color-mix(in srgb,var(--fg) 6%,transparent);font:inherit;font-size:12.5px;color:var(--fg)}.sgcv i{display:grid}.sgcv svg{width:12px;height:12px;color:var(--muted)}
+ .sgcalctl .ic{width:30px;height:30px;display:grid;place-items:center;border-radius:6px;color:var(--muted)}.sgcalctl .ic:hover{background:color-mix(in srgb,var(--fg) 6%,transparent);color:var(--fg)}.sgcalctl svg{width:16px;height:16px}
+ .sgcn{display:flex;align-items:center;gap:2px}.sgcn>button:not(.ic){font:inherit;font-size:12.5px;color:var(--muted);padding:5px 8px;border-radius:6px}.sgcn>button:not(.ic):hover{color:var(--fg);background:color-mix(in srgb,var(--fg) 6%,transparent)}
+}
+@media (min-width:821px){
+ body.sgd .sgprojw .subp{display:none}
+ .sgpdesc{font-size:12.5px;color:var(--fg);padding:2px 8px 10px;cursor:text}.sgpdesc span{color:var(--muted)}.sgpdesc textarea{width:100%;background:transparent;border:0;outline:0;color:var(--fg);font:inherit;resize:vertical}
+ .sgtabs{position:absolute;right:56px;top:10px;margin:0!important;border:0!important;gap:2px}.sgtabs button{font-size:11.5px!important;padding:3px 8px!important;border-radius:5px}
+ .sgprojw{position:relative}.sgprojw .pmorebtn2{position:absolute;right:14px;top:6px}
+ .sggrp{position:relative;margin-top:8px}.sggrp .sgsech{padding:10px 8px 6px}.sggact{position:absolute;right:30px;top:7px;display:none;gap:2px}.sggrp:hover .sggact{display:flex}.sggact .ic{width:24px;height:24px;display:grid;place-items:center;color:var(--muted)}.sggact svg{width:13px;height:13px}
+ .sgsubs{margin-top:12px}.sgsub{display:flex;align-items:center;gap:10px;width:100%;padding:8px;border-radius:6px;font:inherit;color:var(--fg);text-align:left}.sgsub:hover{background:color-mix(in srgb,var(--fg) 4%,transparent)}.sgsub b{font-size:14px;font-weight:600;flex:1}.sgsub span{font-size:11.5px;color:var(--muted)}.sgsub svg{width:14px;height:14px;color:var(--muted)}
+ .sgarch{display:flex;align-items:center;gap:8px;width:100%;padding:12px 8px;font:inherit;font-size:12.5px;color:var(--muted);text-align:left}.sgarch span{margin-left:auto;font-size:11.5px}.sgarch svg{width:14px;height:14px}
+ .sgempty2{display:flex;flex-direction:column;align-items:center;gap:6px;padding:18vh 0;color:var(--muted)}.sgempty2 b{font-weight:500;color:color-mix(in srgb,var(--fg) 70%,transparent)}.sgempty2 span{font-size:11.5px}
+}
+.sgring{display:block;width:15px;height:15px;border-radius:50%;border:2px solid var(--c)}
+@media (min-width:821px){
+ .sgclean{position:absolute;right:20px;top:-38px;display:flex;align-items:center;gap:5px;font:inherit;font-size:12px;color:var(--muted);padding:4px 8px;border-radius:6px}.sgclean:hover{color:var(--fg);background:color-mix(in srgb,var(--fg) 6%,transparent)}.sgclean svg{width:13px;height:13px}
+ #content .wrap.sgwrap:has(.sgclean){position:relative}
+ .sgchk0{width:15px;height:15px;border:1.5px solid color-mix(in srgb,var(--fg) 40%,transparent);border-radius:3px;flex:none;margin-top:2px}.sgchk0.nt{border:0;color:var(--muted)}.sgchk0.nt svg{width:15px;height:15px}
+ .sgtd{font-size:11px;color:var(--muted);padding-top:2px;white-space:nowrap}.sgtr{display:flex;gap:2px;opacity:0}.sgtrrow:hover .sgtr{opacity:1}.sgtr .ic{width:24px;height:24px;display:grid;place-items:center;color:var(--muted)}.sgtr svg{width:13px;height:13px}
+}
 </style>
 </head>
 <body>
@@ -891,7 +930,7 @@ input[type=time].sgnum{width:96px}
 <div id="toast" hidden></div>
 <div id="modal" hidden></div>
 
-<script type="module" src="app.js?v=20261116a"></script>
+<script type="module" src="app.js?v=20261116b"></script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
 </body>
 </html>
