@@ -798,6 +798,12 @@ input[type=time].sgnum{width:96px}
 /* more sheet */
 .sgmore{padding:6px 0 4px}.sggrab{width:36px;height:4px;border-radius:2px;background:var(--muted);opacity:.5;margin:4px auto 10px}.sgmrow{display:flex;align-items:center}.sgmrow [data-mv]{flex:1;display:flex;align-items:center;gap:14px;padding:12px 18px;font:inherit;font-size:15px;color:var(--fg);text-align:left}.sgmrow svg{width:19px;height:19px;color:color-mix(in srgb,var(--fg) 75%,transparent)}
 .sgmrow .pin{padding:12px 18px;color:var(--muted)}.sgmrow .pin svg{width:17px;height:17px;fill:none}.sgmrow .pin.on svg{fill:currentColor;color:var(--fg)}
+.sgjump{padding:4px 0 18px}.sgjump .sghd{grid-template-columns:52px 1fr 52px;padding:6px 6px 4px}.sgjump .sghd b{font-size:20px;font-weight:600}.sgjump .sghd .ic svg{width:22px;height:22px}
+.sgwheels{position:relative;display:grid;grid-template-columns:1fr 1.6fr 1.1fr;height:308px;margin:6px 34px 0;perspective:600px}
+.sgwband{position:absolute;left:-10px;right:-10px;top:132px;height:44px;border-radius:10px;background:color-mix(in srgb,var(--fg) 8%,var(--bg));pointer-events:none}
+.sgwc{position:relative;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;overscroll-behavior:contain}.sgwc::-webkit-scrollbar{display:none}
+.sgwc b,.sgwc i{display:block;height:44px;line-height:44px;text-align:center;scroll-snap-align:start;font-weight:400;font-size:20px;font-style:normal;color:var(--fg);transform-origin:center;cursor:pointer;white-space:nowrap}
+.sgwc b.on{font-size:23px}.sgwc b.dis{color:var(--muted)}
 </style>
 </head>
 <body>
@@ -839,7 +845,7 @@ input[type=time].sgnum{width:96px}
 <div id="toast" hidden></div>
 <div id="modal" hidden></div>
 
-<script type="module" src="app.js?v=20261113v"></script>
+<script type="module" src="app.js?v=20261113w"></script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
 </body>
 </html>

@@ -1393,3 +1393,19 @@ const sgClk=s=>{s=Math.max(0,Math.round(s));const h=Math.floor(s/3600),m=Math.fl
 /* status bar and navigation bar take the page background instead of green */
 {const syncBar=()=>{const m=document.querySelector('meta[name=theme-color]');if(!m)return;const c=getComputedStyle(document.body).backgroundColor;if(c&&m.content!==c)m.content=c};
  const _r9=render;render=function(){_r9();syncBar()};setTimeout(syncBar,300);matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>setTimeout(syncBar,50))}
+/* ===== «Переход к дате»: bottom sheet with day / month / year wheels like Singularity ===== */
+function sgJump(cur,cb){const H=44;const [Y0,M0,D0]=cur.split('-').map(Number);const years=[];for(let k=Y0-10;k<=Y0+10;k++)years.push(k);
+  const col=(id,arr,sel)=>`<div class="sgwc" id="${id}">${'<i></i>'.repeat(3)}${arr.map((v,i)=>`<b data-i="${i}">${v}</b>`).join('')}${'<i></i>'.repeat(3)}</div>`;
+  const m=modal(`<div class="sgsheet sgjump"><div class="sggrab"></div><div class="sghd"><button class="ic" data-w="x" aria-label="Отмена">${ic('x')}</button><b>Переход к дате</b><button class="ic" data-w="ok" aria-label="Готово">${ic('check')}</button></div><div class="sgwheels"><div class="sgwband"></div>${col('jD',[...Array(31)].map((_,i)=>i+1))}${col('jM',MONG)}${col('jY',years)}</div></div>`);m.classList.add('sgbottom');
+  const cD=m.querySelector('#jD'),cM=m.querySelector('#jM'),cY=m.querySelector('#jY');
+  const idx=c=>Math.max(0,Math.min(c.querySelectorAll('b').length-1,Math.round(c.scrollTop/H)));
+  const paint=c=>{const i=idx(c);c.querySelectorAll('b').forEach((b,k)=>{const d=Math.abs(k-c.scrollTop/H);b.style.opacity=Math.max(.15,1-d*.32);b.style.transform=`scale(${Math.max(.7,1-d*.09)}) rotateX(${Math.max(-70,Math.min(70,(k-c.scrollTop/H)*-22))}deg)`;b.classList.toggle('on',k===i)})};
+  const days=()=>new Date(years[idx(cY)],idx(cM)+1,0).getDate();
+  const fixD=()=>{const n=days();cD.querySelectorAll('b').forEach((b,k)=>b.classList.toggle('dis',k>=n))};
+  setTimeout(()=>{cD.scrollTop=(D0-1)*H;cM.scrollTop=(M0-1)*H;cY.scrollTop=years.indexOf(Y0)*H;[cD,cM,cY].forEach(paint);fixD()},20);
+  [cD,cM,cY].forEach(c=>{let t;c.addEventListener('scroll',()=>{paint(c);clearTimeout(t);t=setTimeout(()=>{if(c===cD&&idx(cD)>=days())cD.scrollTo({top:(days()-1)*H,behavior:'smooth'});if(c!==cD){fixD();if(idx(cD)>=days())cD.scrollTo({top:(days()-1)*H,behavior:'smooth'})}},120)},{passive:true});
+   c.addEventListener('click',e=>{const b=e.target.closest('b');if(b)c.scrollTo({top:+b.dataset.i*H,behavior:'smooth'})})});
+  m.onclick=e=>{if(e.target===m){closeModal();return}const w=e.target.closest('[data-w]');if(!w)return;if(w.dataset.w==='ok'){const y=years[idx(cY)],mo=idx(cM)+1,d=Math.min(idx(cD)+1,days());closeModal();cb(`${y}-${pad(mo)}-${pad(d)}`)}else closeModal()}}
+const sgJumpGo=d=>{if(view.type==='calendar'){calDay=d;calMonth=d.slice(0,7);render()}else if(view.type==='upcoming'){planJump=d;const t0=today();const base=addDays(t0,-((new Date(t0+'T00:00').getDay()-(S.meta.settings.weekStart??1)+7)%7));sgWeek=Math.floor((new Date(d+'T00:00')-new Date(base+'T00:00'))/6048e5);sgFold?.delete(d);render()}else{calDay=d;calMonth=d.slice(0,7);goView('calendar')}};
+{const _mw=monthWheel;monthWheel=function(){if(isM())sgJump(calDay||calMonth+'-01',sgJumpGo);else _mw()}}
+{const _dj=dateJump;dateJump=function(x,y){if(isM()){closeCtx();sgJump(view.type==='calendar'?(calDay||today()):(planJump||today()),sgJumpGo)}else _dj(x,y)}}
