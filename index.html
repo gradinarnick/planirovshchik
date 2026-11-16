@@ -905,15 +905,15 @@ input[type=time].sgnum{width:96px}
  li.inline-host #detail.sgdet2{border-radius:10px;background:color-mix(in srgb,var(--fg) 3%,var(--bg))!important}
  li.inline-host #detail.sgdet2 .sgdt{padding:12px 16px 2px}li.inline-host #detail.sgdet2 .sgdnslot{padding:0 16px 6px 46px}li.inline-host #detail.sgdet2 .sgdbar{padding:8px 10px 10px}
  /* sidebar: blue icons on top sections, colour stripe at projects */
- #side nav:not(.icrow) [data-nav]:not([data-nav=project]) svg{color:#3b8cff}
+ #side nav:not(.icrow) [data-nav]:not([data-nav=project]) svg{color:var(--accent)}
  #side [data-nav=project]{position:relative}#side [data-nav=project]::before{content:'';position:absolute;left:-10px;top:3px;bottom:3px;width:3px;border-radius:0 2px 2px 0;background:var(--pcol,transparent)}
  /* weights closer to the original */
  body.sgd #side button,body.sgd #side a{font-weight:500}
  body.sgd .sgrow .ttl{font-weight:500;font-size:14px}
  body.sgd .sgmeta{font-weight:500}
  body.sgd #vtitle{font-weight:700}
- body.sgd .sgsech{padding:18px 6px 8px}body.sgd .sgsech b{font-size:19px;font-weight:700}body.sgd .sgsech>svg:first-child{width:19px;height:19px;color:#3b8cff}
- body.sgd .sgmk{display:inline;color:#3b8cff;margin-right:6px}
+ body.sgd .sgsech{padding:18px 6px 8px}body.sgd .sgsech b{font-size:19px;font-weight:700}body.sgd .sgsech>svg:first-child{width:19px;height:19px;color:var(--accent)}
+ body.sgd .sgmk{display:inline;color:var(--accent);margin-right:6px}
 }
 </style>
 </head>
@@ -956,7 +956,7 @@ input[type=time].sgnum{width:96px}
 <div id="toast" hidden></div>
 <div id="modal" hidden></div>
 
-<script type="module" src="app.js?v=20261116c"></script>
+<script type="module" src="app.js?v=20261116d"></script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
 </body>
 </html>
