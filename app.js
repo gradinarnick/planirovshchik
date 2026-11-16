@@ -1542,3 +1542,9 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
 {const _r13=render;render=function(){_r13();if(!S.meta)return;document.querySelectorAll('#side [data-nav=project][data-id]').forEach(b=>{const p=proj(b.dataset.id);if(p)b.style.setProperty('--pcol',p.color)});
   const tp=document.querySelector('.tbar [data-x=twoPane],[data-x=twoPane]');if(tp){const three=S.meta.settings.threePane!==false;tp.title=three?'Включить двухпанельный режим':'Включить трехпанельный режим'}}}
 document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("[data-x=twoPane]")&&!isM()){selId=null;selNoteId=null;setTimeout(()=>render(),0)}},true);
+/* keep the task card alive when lists are redrawn (two-pane mode puts it inside the list) */
+const SGDET=document.getElementById('detail');
+{const _rdX=renderDetail;renderDetail=function(f){if(SGDET&&!SGDET.isConnected)$('#app').appendChild(SGDET);_rdX(f)}}
+{const _r14=render;render=function(){if(SGDET&&!SGDET.isConnected)$('#app').appendChild(SGDET);_r14();if(!S.meta||!SGDET)return;if(!SGDET.isConnected){$('#app').appendChild(SGDET);renderDetail()}else if(S.meta.settings.threePane===false&&selId){const row=document.querySelector(`.task[data-id="${selId}"]`);if(row&&row.nextElementSibling?.firstElementChild!==SGDET){placeInline();document.querySelectorAll('li.inline-host').forEach(x=>{if(!x.firstElementChild)x.remove()})}}}}
+Object.assign(ICONS,{pane3:'<rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M9 5v14M15 5v14"/>',pane2:'<rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M10 5v14"/>'});
+{const _r15=render;render=function(){_r15();if(!S.meta)return;document.querySelectorAll('[data-x=twoPane]').forEach(b=>{const three=S.meta.settings.threePane!==false;b.innerHTML=ic(three?'pane3':'pane2');b.title=three?'Трехпанельный режим: задача открывается справа. Нажми — будет под задачей':'Двухпанельный режим: задача открывается под задачей. Нажми — будет справа'})}}

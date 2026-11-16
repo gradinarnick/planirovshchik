@@ -906,7 +906,7 @@ input[type=time].sgnum{width:96px}
  li.inline-host #detail.sgdet2 .sgdt{padding:12px 16px 2px}li.inline-host #detail.sgdet2 .sgdnslot{padding:0 16px 6px 46px}li.inline-host #detail.sgdet2 .sgdbar{padding:8px 10px 10px}
  /* sidebar: blue icons on top sections, colour stripe at projects */
  #side nav:not(.icrow) [data-nav]:not([data-nav=project]) svg{color:var(--accent)}
- #side [data-nav=project]{position:relative}#side [data-nav=project]::before{content:'';position:absolute;left:-10px;top:3px;bottom:3px;width:3px;border-radius:0 2px 2px 0;background:var(--pcol,transparent)}
+ #side [data-nav=project]{position:relative}#side [data-nav=project]::before{content:'';position:absolute;left:-10px;top:50%;height:12px;margin-top:-6px;width:2px;border-radius:0 2px 2px 0;background:var(--pcol,transparent)}
  /* weights closer to the original */
  body.sgd #side button,body.sgd #side a{font-weight:500}
  body.sgd .sgrow .ttl{font-weight:500;font-size:14px}
@@ -956,7 +956,7 @@ input[type=time].sgnum{width:96px}
 <div id="toast" hidden></div>
 <div id="modal" hidden></div>
 
-<script type="module" src="app.js?v=20261116d"></script>
+<script type="module" src="app.js?v=20261116e"></script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
 </body>
 </html>
