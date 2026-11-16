@@ -915,6 +915,54 @@ input[type=time].sgnum{width:96px}
  body.sgd .sgsech{padding:18px 6px 8px}body.sgd .sgsech b{font-size:19px;font-weight:700}body.sgd .sgsech>svg:first-child{width:19px;height:19px;color:var(--accent)}
  body.sgd .sgmk{display:inline;color:var(--accent);margin-right:6px}
 }
+/* desktop calendar like Singularity */
+@media (min-width:821px){
+ body.sgcal #vsub{display:none}
+ .sgct{display:inline-flex;align-items:center;gap:8px}.sgct>svg{width:20px;height:20px;color:var(--muted)}
+ .sgctb{font:inherit;font-weight:700;color:var(--fg);padding:3px 10px;border-radius:8px;background:color-mix(in srgb,var(--accent) 14%,transparent)}.sgct .ic{width:26px;height:26px;display:grid;place-items:center;color:var(--muted)}.sgct .ic svg{width:16px;height:16px}
+ body.sgcal .top:has(.sgcalctl) .caltitle::after{display:none}
+ body.sgcal #content .wrap{padding:0 0 0 0!important;max-width:none}
+ /* month */
+ body.sgcal .cal{gap:0!important;border:0!important;background:transparent!important}
+ body.sgcal .cal .wd{text-align:right;padding:6px 8px;font-size:13px;color:color-mix(in srgb,var(--fg) 80%,transparent)!important;font-weight:500;border-bottom:1px solid var(--line);text-transform:capitalize}
+ body.sgcal .cal > button{border:0!important;border-right:1px solid var(--line)!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;background:transparent!important;padding:4px 2px!important;min-height:118px;align-items:stretch;box-shadow:none!important;outline:0!important}
+ body.sgcal .cal > button.out{background:transparent!important}body.sgcal .cal > button.out .d{opacity:.45}
+ body.sgcal .cal > button .d{align-self:flex-end;text-align:right;font-size:13px;font-weight:500;padding:2px 6px;color:var(--fg)!important;width:auto;height:auto;border-radius:0;background:transparent!important}
+ body.sgcal .cal > button.today .d{background:var(--accent)!important;color:#fff!important;border-radius:50%;min-width:24px;height:24px;display:grid;place-items:center;padding:0}
+ body.sgcal .cal > button.sel,body.sgcal .cal > button.on{outline:0!important;box-shadow:none!important}
+ body.sgcal .cal .mts{display:flex;flex-direction:column;gap:2px;width:100%}
+ body.sgcal .cal .mt{display:flex!important;align-items:center;gap:5px;font-size:12px!important;line-height:18px;height:19px;padding:0 6px 0 5px!important;border:0!important;border-left:2px solid var(--pc)!important;border-radius:3px!important;background:transparent!important;color:var(--fg)!important;white-space:nowrap;overflow:hidden;text-align:left}
+ body.sgcal .cal .mt.mtall{background:color-mix(in srgb,var(--pc) 28%,transparent)!important;border-left-width:0!important;padding-left:7px!important}
+ body.sgcal .cal .mt .cchk{width:10px;height:10px;border:0;flex:none;margin:0}
+ body.sgcal .cal .mt .cchk:not(.on)::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--pc);display:block;margin:auto}
+ body.sgcal .cal .mt.is-done{text-decoration:line-through;opacity:.55}
+ body.sgcal .cal .mtt{font-style:normal;margin-left:auto;padding-left:6px;color:color-mix(in srgb,var(--fg) 85%,transparent)}
+ body.sgcal .cal .more,body.sgcal .cal .mmore{font-size:12px;color:var(--fg);padding-left:6px;text-align:left}
+ /* week / day */
+ body.sgcal .tg{border:0!important;border-radius:0!important;background:transparent!important}
+ body.sgcal .tghead{border:0!important;background:transparent!important}
+ body.sgcal .tghead button{text-align:left!important;justify-content:flex-start!important;padding:6px 8px!important;font-size:13.5px!important;color:color-mix(in srgb,var(--fg) 75%,transparent)!important;font-weight:500;background:transparent!important}
+ body.sgcal .tghead button.today{color:var(--fg)!important}body.sgcal .tghead button b{display:none}
+ body.sgcal .tgall{border-bottom:1px solid var(--line)!important;min-height:84px}body.sgcal .tgall > span{font-size:12px;color:var(--muted);text-align:right;padding:28px 8px 0;line-height:1.3;text-transform:capitalize}
+ body.sgcal .tgall .wki{font-size:12.5px!important;border:0!important;border-radius:4px!important;background:color-mix(in srgb,var(--pc,var(--accent)) 26%,transparent)!important;padding:2px 8px!important;margin:2px 3px!important}
+ body.sgcal .tgcol{border-left:1px solid var(--line)!important;background:transparent!important}body.sgcal .tgcol.today{background:transparent!important}
+ body.sgcal .tgslot{border-top:1px solid color-mix(in srgb,var(--fg) 6%,transparent)!important}
+ body.sgcal .tgtimes span{font-size:12.5px;color:var(--muted);right:8px}
+ body.sgcal .tgev{border:0!important;border-left:2px solid var(--pc)!important;border-radius:3px!important;background:color-mix(in srgb,var(--pc) 22%,var(--bg))!important;box-shadow:none!important;padding:3px 44px 3px 8px!important;font-size:12.5px!important;color:var(--fg)!important;line-height:1.35;overflow:hidden}
+ body.sgcal .tgev small{position:absolute;right:6px;top:3px;text-align:right;font-size:12px;line-height:1.35;color:color-mix(in srgb,var(--fg) 85%,transparent)}
+ body.sgcal .tgev .cchk{position:static!important;width:11px;height:11px;margin:0 5px 0 0;vertical-align:-1px}
+ body.sgcal .tgev.is-done{text-decoration:line-through;opacity:.6}
+}
+@media (min-width:821px){
+ body.sgcal .cal .mt > small{display:none}
+ body.sgcal .tg{max-height:calc(100vh - 70px)!important;margin-top:0!important}
+ body.sgcal .tghead{position:sticky;top:0;z-index:6;background:var(--bg)!important;height:36px}
+ body.sgcal .tgall{position:sticky;top:36px;z-index:6;background:var(--bg)!important}
+ body.sgcal .tg .tghead>span,body.sgcal .tg .tgall>span,body.sgcal .tg .tgtimes{background:var(--bg)!important}
+ body.sgcal .tghead button{display:flex!important;align-items:center}
+ body.sgcal .cal .cnt{font-size:12px;color:var(--fg);padding:1px 6px;text-align:left}
+}
+@media (min-width:821px){body.sgcal .tgall .addline{display:none!important}body.sgcal .cal ~ .group,body.sgcal .cal ~ section{display:none}}
 </style>
 </head>
 <body>
@@ -956,7 +1004,7 @@ input[type=time].sgnum{width:96px}
 <div id="toast" hidden></div>
 <div id="modal" hidden></div>
 
-<script type="module" src="app.js?v=20261116e"></script>
+<script type="module" src="app.js?v=20261116f"></script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
 </body>
 </html>

@@ -1548,3 +1548,17 @@ const SGDET=document.getElementById('detail');
 {const _r14=render;render=function(){if(SGDET&&!SGDET.isConnected)$('#app').appendChild(SGDET);_r14();if(!S.meta||!SGDET)return;if(!SGDET.isConnected){$('#app').appendChild(SGDET);renderDetail()}else if(S.meta.settings.threePane===false&&selId){const row=document.querySelector(`.task[data-id="${selId}"]`);if(row&&row.nextElementSibling?.firstElementChild!==SGDET){placeInline();document.querySelectorAll('li.inline-host').forEach(x=>{if(!x.firstElementChild)x.remove()})}}}}
 Object.assign(ICONS,{pane3:'<rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M9 5v14M15 5v14"/>',pane2:'<rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M10 5v14"/>'});
 {const _r15=render;render=function(){_r15();if(!S.meta)return;document.querySelectorAll('[data-x=twoPane]').forEach(b=>{const three=S.meta.settings.threePane!==false;b.innerHTML=ic(three?'pane3':'pane2');b.title=three?'Трехпанельный режим: задача открывается справа. Нажми — будет под задачей':'Двухпанельный режим: задача открывается под задачей. Нажми — будет справа'})}}
+/* ===== desktop calendar look like Singularity (week / day / month) ===== */
+const MSH2=['янв.','февр.','мар.','апр.','мая','июня','июля','авг.','сент.','окт.','нояб.','дек.'];
+{const _r16=render;render=function(){_r16();if(!S.meta||isM()||view.type!=='calendar')return;
+  $('#vsub').textContent='';const vt=$('#vtitle');const ws=S.meta.settings.weekStart??1;const d0=calDay||today();const x=new Date(d0+'T00:00');
+  let t;if(calMode==='month'){const [Y,M]=calMonth.split('-').map(Number);t=`${MONN[M-1]} ${Y} г.`}
+  else if(calMode==='day')t=`${x.getDate()} ${MONG2[x.getMonth()]} ${x.getFullYear()} г.`;
+  else{const n=calMode==='week'?7:3;const s=calMode==='week'?addDays(d0,-((x.getDay()-ws+7)%7)):d0;const e=addDays(s,n-1);const a=new Date(s+'T00:00'),b=new Date(e+'T00:00');t=a.getMonth()===b.getMonth()?`${a.getDate()} – ${b.getDate()} ${MSH2[b.getMonth()]} ${b.getFullYear()} г.`:`${a.getDate()} ${MSH2[a.getMonth()]} – ${b.getDate()} ${MSH2[b.getMonth()]} ${b.getFullYear()} г.`}
+  vt.innerHTML=`<span class="sgct">${ic('calgrid')}<button class="sgctb" data-x="monthWheel">${t}</button><button class="ic" data-x="calMore" aria-label="Ещё">${ic('dots')}</button></span>`;
+  document.querySelectorAll('.tgtimes span').forEach(s=>s.textContent=s.textContent.replace(/^0(\d)/,'$1'));
+  const al=document.querySelector('.tgall > span');if(al)al.innerHTML='Весь<br>день';
+  document.querySelectorAll('.tghead button').forEach(b=>{const d=b.dataset.d;if(!d)return;const y=new Date(d+'T00:00');b.innerHTML=`${WDC[y.getDay()]} ${y.getDate()}`});
+  document.querySelectorAll('.tgev small').forEach(s=>{if(!s.dataset.sg){s.dataset.sg=1;s.innerHTML=esc(s.textContent).replace(/\s*[–-]\s*/,'<br>')}});
+  document.querySelectorAll('.cal .mt[data-id]').forEach(m=>{const tk=S.tasks.get(m.dataset.id);if(tk?.time&&!m.querySelector('.mtt'))m.insertAdjacentHTML('beforeend',`<em class="mtt">${esc(tk.time)}</em>`);if(tk&&!tk.time)m.classList.add('mtall')});
+  document.querySelectorAll('.cal > button .d').forEach(s=>{const b=s.closest('button');const d=b?.dataset.d;if(d&&d.endsWith('-01')&&!s.dataset.sg){s.dataset.sg=1;s.textContent=`1 ${MSH2[+d.slice(5,7)-1].replace('.','')}`}})}}
