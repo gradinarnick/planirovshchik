@@ -1587,3 +1587,33 @@ SET_NAV[0][1][2]=['Темы и оформление','palette',['Оформле�
  document.addEventListener('pointerdown',e=>{const d=e.target.closest&&e.target.closest('.sgdial.p');if(!d||S.meta?.running)return;drag={el:d,last:ang(e,d),min:tmMin||25};d.setPointerCapture?.(e.pointerId);e.preventDefault()});
  document.addEventListener('pointermove',e=>{if(!drag)return;const a=ang(e,drag.el);let da=a-drag.last;if(da>180)da-=360;if(da<-180)da+=360;drag.last=a;drag.min=Math.max(1,Math.min(60,drag.min+da/6));setMin(drag.min)});
  const end=()=>{if(!drag)return;drag=null;if(tmMin)try{S.meta.settings.pomo.work=tmMin;saveMeta({quiet:true})}catch(e){}};document.addEventListener('pointerup',end);document.addEventListener('pointercancel',end)}
+
+// ===== Gradinarity: Telegram-бот и MCP (сервер на Cloudflare Workers) =====
+const GAPI='https://gradinarity.gradinarnick.workers.dev';
+async function gApi(p,extra={}){const u=auth.currentUser;if(!u)throw new Error('Сначала войдите в аккаунт');const idToken=await u.getIdToken();let tz='';try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone}catch{}
+ const r=await fetch(GAPI+'/api/'+p,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({idToken,refreshToken:u.refreshToken,tz,...extra})});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error==='auth'?'Сессия устарела — войдите заново':(d.error||'Сервер недоступен ('+r.status+')'));return d}
+function gSheet(title){let m=document.getElementById('gmodal');if(!m){m=document.createElement('div');m.id='gmodal';document.body.appendChild(m)}m.className=isM()?'bot':'';m.innerHTML=`<div class="gbox gint" role="dialog" aria-modal="true"><div class="ghd"><b>${esc(title)}</b><button class="ic" data-w="x">${ic('x')}</button></div><div class="sgtext gbody"><p class="small">Загрузка…</p></div></div>`;m.hidden=false;return [m,m.querySelector('.gbody')]}
+const gClose=()=>{const m=document.getElementById('gmodal');if(m){m.hidden=true;m.innerHTML=''}};
+function sgTelegram(){const [m,box]=gSheet('Telegram-бот');let st=null;
+ const draw=async()=>{try{st=await gApi('status')}catch(e){box.innerHTML=`<p>⚠️ ${esc(e.message)}</p>`;return}
+  box.innerHTML=`<div class="gbot"><img src="icon.svg" alt=""><div><b>@${esc(st.bot)}</b><small class="${st.linked?'ok':''}">${st.linked?'Подключён'+(st.tgName?': '+esc(st.tgName):''):'Не подключён'}</small></div></div>
+  <p>Пишите боту задачи обычным сообщением — они сразу появятся во «Входящих».</p><ul class="ghelp"><li>«Купить молоко <b>завтра</b>» / «<b>сегодня</b>» / «<b>25.11</b>» — с датой</li><li>«… <b>!!</b>» в конце — высокий приоритет</li><li>Вторая строка — заметка к задаче</li><li><b>/today</b> — задачи на сегодня, <b>/inbox</b> — входящие</li></ul>
+  <div class="gbtns">${st.linked?`<a class="btn" href="https://t.me/${esc(st.bot)}" target="_blank" rel="noopener">${ic('send')}Открыть бота</a><button class="btn ghost" data-a="unlink">Отключить</button>`:`<button class="btn" data-a="link">${ic('send')}Подключить Telegram</button>`}</div><div class="gout"></div>`};
+ m.onclick=async e=>{if(e.target===m||e.target.closest('[data-w]'))return gClose();const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a;b.disabled=true;
+  try{if(a==='link'){const d=await gApi('link');box.querySelector('.gout').innerHTML=`<p>Откройте бота и нажмите <b>«Старт»</b> — аккаунт привяжется автоматически. Ссылка действует 15 минут.</p><div class="gbtns"><a class="btn" href="${d.url}" target="_blank" rel="noopener">${ic('send')}Открыть @${esc(d.bot)}</a><button class="btn ghost" data-a="check">Проверить</button></div><p class="small">Или отправьте боту: <code>/start ${d.code}</code></p>`;try{window.open(d.url,'_blank')}catch{}}
+   else if(a==='unlink'){await gApi('unlink');await draw();toast('Telegram отключён')}
+   else if(a==='check'){await draw();toast(st&&st.linked?'Telegram подключён ✓':'Пока не подключён — нажмите «Старт» в боте')}}
+  catch(err){toast(err.message)}finally{b.disabled=false}};
+ draw()}
+function sgMcp(){const [m,box]=gSheet('MCP-сервер');
+ const draw=(url)=>{box.innerHTML=`<p>MCP позволяет ИИ-ассистентам (Claude, ChatGPT, Cursor и др.) читать и создавать ваши задачи в Gradinarity.</p>${url?`<label class="glbl">Адрес MCP-сервера (секретный — не публикуйте)</label><div class="gurl"><input readonly value="${esc(url)}"><button class="ic" data-a="copy" title="Копировать">${ic('copy')}</button></div>
+  <ul class="ghelp"><li><b>Claude:</b> Настройки → Коннекторы → «Добавить свой коннектор» → вставьте адрес</li><li><b>Другие клиенты:</b> тип Streamable HTTP, тот же адрес</li><li>Инструменты: list_tasks, create_task, update_task, complete_task, delete_task, list_projects</li></ul>
+  <div class="gbtns"><button class="btn ghost" data-a="new">Создать новый адрес</button><button class="btn ghost" data-a="off">Отключить</button></div>`:`<div class="gbtns"><button class="btn" data-a="new">${ic('move')}Включить MCP</button></div>`}`};
+ gApi('status').then(s=>draw(s.mcp)).catch(e=>box.innerHTML=`<p>⚠️ ${esc(e.message)}</p>`);
+ m.onclick=async e=>{if(e.target===m||e.target.closest('[data-w]'))return gClose();const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a;
+  if(a==='copy'){const v=box.querySelector('.gurl input').value;try{await navigator.clipboard.writeText(v)}catch{box.querySelector('.gurl input').select();document.execCommand('copy')}return toast('Скопировано')}
+  b.disabled=true;try{if(a==='new'){const d=await gApi('mcp');draw(d.mcp);toast('Адрес MCP создан')}else if(a==='off'){await gApi('mcp-off');draw(null);toast('MCP отключён')}}catch(err){toast(err.message)}finally{b.disabled=false}};
+}
+const gFix=P=>{const fix=(pg,re,fn)=>{if(P[pg])P[pg].items.forEach(it=>{if(it&&it.l&&re.test(it.l)){it.run=fn;delete it.to}})};fix('set',/^Telegram-бот$/,sgTelegram);fix('mcp',/^MCP$/,sgMcp);fix('qaD',/Telegram-бота/,sgTelegram);return P};
+{const _sp=sgPages;sgPages=function(){return gFix(_sp())}}
+{const _spd=sgPagesD;sgPagesD=function(){return gFix(_spd())}}
