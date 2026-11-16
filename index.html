@@ -963,6 +963,28 @@ input[type=time].sgnum{width:96px}
  body.sgcal .cal .cnt{font-size:12px;color:var(--fg);padding:1px 6px;text-align:left}
 }
 @media (min-width:821px){body.sgcal .tgall .addline{display:none!important}body.sgcal .cal ~ .group,body.sgcal .cal ~ section{display:none}}
+/* desktop «Темы и оформление» */
+@media (min-width:821px){
+ .sgthbox{background:color-mix(in srgb,var(--fg) 4%,var(--bg));border-radius:12px;padding:6px 18px 6px;margin-top:6px}
+ .sgthdemo{padding:10px 30px 12px;border-bottom:1px solid var(--line)}
+ .sgthrow{display:flex;align-items:flex-start;gap:12px;padding:9px 0}.sgthrow>div{flex:1;min-width:0}.sgthrow b{display:block;font-size:14px;font-weight:500}.sgthrow .st{color:var(--accent);margin-right:6px}
+ .sgthrow small{display:flex;align-items:center;gap:4px;font-size:11.5px;color:var(--muted);margin-top:3px;font-weight:500}.sgthrow .rp svg{width:11px;height:11px}
+ .sgthchk{width:16px;height:16px;border:1.5px solid color-mix(in srgb,var(--fg) 55%,transparent);border-radius:3px;flex:none;margin-top:2px}.sgthchk.red{border-color:#e5484d}
+ .sgthr{display:flex;align-items:center;gap:8px;color:var(--muted)}.sgthr svg{width:15px;height:15px}.sgthr em{font-style:normal;font-size:12px;color:var(--accent);background:color-mix(in srgb,var(--accent) 16%,transparent);padding:2px 7px;border-radius:5px}
+ .sgthline{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0;border-bottom:1px solid var(--line)}.sgthline:last-child{border-bottom:0}.sgthline>b{font-size:14px;font-weight:500}
+ .sgthtiles{display:flex;gap:10px}.sgtht{display:flex;flex-direction:column;align-items:center;gap:6px;font:inherit;font-size:12.5px;color:var(--fg)}
+ .sgtht span{position:relative;width:62px;height:62px;border-radius:8px;background:var(--bg);border:2px solid transparent;outline:1px solid color-mix(in srgb,var(--fg) 12%,transparent);overflow:hidden;display:block}.sgtht.on span{border-color:var(--accent);outline-color:transparent}
+ .sgtht span{background:var(--bg)!important}
+ .sgtht span i:nth-child(1){position:absolute;left:8px;top:28px;width:20px;height:7px;border-radius:2px;background:var(--ac)}.sgtht span i:nth-child(2),.sgtht span i:nth-child(3){position:absolute;top:39px;width:8px;height:7px;border-radius:2px;background:color-mix(in srgb,#888 30%,var(--bg))}.sgtht span i:nth-child(2){left:8px}.sgtht span i:nth-child(3){left:19px}
+ .sgtht span em{position:absolute;right:7px;bottom:4px;font-style:normal;font-size:28px;line-height:1;color:#888;mix-blend-mode:normal}
+ .sgthacc{display:flex;gap:10px}.sgthacc button{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:#fff}.sgthacc svg{width:15px;height:15px}
+ .sgthzoom{display:flex;align-items:center;gap:10px;width:min(340px,50%)}.sgthzoom span{font-size:12px;color:var(--fg)}.sgthzoom .big{font-size:24px}
+ .sgzr{position:relative;flex:1;height:20px}.sgzr input{position:absolute;inset:0;width:100%;margin:0;opacity:0;cursor:pointer;z-index:2}
+ .sgzr .sgzd{position:absolute;left:0;right:0;top:9px;height:2px;display:flex;justify-content:space-between;background:linear-gradient(90deg,var(--accent) var(--p,30%),color-mix(in srgb,var(--fg) 15%,transparent) var(--p,30%))}
+ .sgzr .sgzd i{width:4px;height:4px;border-radius:50%;margin-top:-1px;background:color-mix(in srgb,var(--fg) 30%,var(--bg))}.sgzr .sgzd i.on{background:var(--accent)}
+ body.sg-brightCal.sgcal .tgev,body.sg-brightCal.sgcal .cal .mt.mtall{background:color-mix(in srgb,var(--pc) 55%,var(--bg))!important}
+}
+@media (min-width:821px){.setov .seth .grow{flex:1}.setov .seth [data-st=_close]{margin-left:auto}.setov .seth b{font-size:18px;font-weight:700}}
 </style>
 </head>
 <body>
@@ -1004,7 +1026,7 @@ input[type=time].sgnum{width:96px}
 <div id="toast" hidden></div>
 <div id="modal" hidden></div>
 
-<script type="module" src="app.js?v=20261116g"></script>
+<script type="module" src="app.js?v=20261116h"></script>
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})</script>
 </body>
 </html>
