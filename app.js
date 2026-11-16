@@ -1617,3 +1617,7 @@ function sgMcp(){const [m,box]=gSheet('MCP-сервер');
 const gFix=P=>{const fix=(pg,re,fn)=>{if(P[pg])P[pg].items.forEach(it=>{if(it&&it.l&&re.test(it.l)){it.run=fn;delete it.to}})};fix('set',/^Telegram-бот$/,sgTelegram);fix('mcp',/^MCP$/,sgMcp);fix('qaD',/Telegram-бота/,sgTelegram);return P};
 {const _sp=sgPages;sgPages=function(){return gFix(_sp())}}
 {const _spd=sgPagesD;sgPagesD=function(){return gFix(_spd())}}
+
+// ===== Мобильная «Темы и оформление»: плитки тем, акцент, масштаб — как в оригинале =====
+{const _spm=sgPages;sgPages=function(){const P=_spm();P.theme={title:'Темы и оформление',items:[{t:'html',h:sgThemeHTML()},{t:'sec'},{t:'tog',l:'Тема как в системе',k:'themeSys',d:'При переключении светлой/тёмной темы на телефоне тема приложения будет меняться автоматически'},{t:'tog',l:'Яркие цвета в Календаре',k:'brightCal',d:'Цвета задач в календаре всегда остаются яркими независимо от темы'}]};return P}}
+document.addEventListener('click',e=>{const b=e.target.closest('#sgpage [data-act=theme],#sgpage [data-act=accent]');if(!b)return;setTimeout(()=>{try{sgRender()}catch(err){}},30)});
