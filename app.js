@@ -1539,7 +1539,7 @@ document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest
   if(k==='dict'){e.stopPropagation();document.querySelector('[data-x=dictate]')?.click();return}
   if(k==='cm'){e.stopPropagation();el._sgOpen=[...new Set([...(el._sgOpen||[]),'cm'])];el.querySelector('[data-sgf=cm]')?.classList.add('sgshow');setTimeout(()=>$('#d-cmnew')?.focus(),30);return}},true);
 /* project colour stripe in the left panel */
-{const _r13=render;render=function(){_r13();if(!S.meta)return;document.querySelectorAll('#side [data-nav=project][data-id]').forEach(b=>{const p=proj(b.dataset.id);if(p)b.style.setProperty('--pcol',p.color)});
+{const _r13=render;render=function(){_r13();if(!S.meta)return;{const sd=document.getElementById('side');const sl=sd?sd.getBoundingClientRect().left:0;document.querySelectorAll('#side [data-nav=project][data-id]').forEach(b=>{const p=proj(b.dataset.id);if(p)b.style.setProperty('--pcol',p.color);const l=b.getBoundingClientRect().left-sl;if(l>0)b.style.setProperty('--pl',(-l)+'px')})}
   const tp=document.querySelector('.tbar [data-x=twoPane],[data-x=twoPane]');if(tp){const three=S.meta.settings.threePane!==false;tp.title=three?'Включить двухпанельный режим':'Включить трехпанельный режим'}}}
 document.addEventListener("click",e=>{if(e.target.closest&&e.target.closest("[data-x=twoPane]")&&!isM()){selId=null;selNoteId=null;setTimeout(()=>render(),0)}},true);
 /* keep the task card alive when lists are redrawn (two-pane mode puts it inside the list) */
